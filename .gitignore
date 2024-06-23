@@ -1,2 +1,7 @@
 node_modules/
 dist/
+# Environment varibales
+.env*
+!.env*.example
+# Keys
+privateKey.pem

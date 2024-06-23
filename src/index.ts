@@ -6,7 +6,7 @@ import dotenv from 'dotenv'
 import routes from './routes'
 import { config } from './configs/config'
 import dbConnection from './configs/dbConnection'
-
+import './utils/genKey'
 dotenv.config()
 
 const port: string | number = config.port || 6060

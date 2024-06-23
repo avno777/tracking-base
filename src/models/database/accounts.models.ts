@@ -7,7 +7,7 @@ export interface IAccount extends Document {
   password: string
   avatarUrl?: string
   role: 'customer' | 'admin' | 'supervisor'
-  refreshToken: string
+  refreshToken?: [string]
   phone?: string
   nationCode?: string
   address?: string
