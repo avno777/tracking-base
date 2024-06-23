@@ -62,6 +62,10 @@ const accountSchema: Schema = new Schema(
     },
     state: {
       type: String
+    },
+    refreshToken: {
+      type: [String],
+      select: false
     }
   },
   { versionKey: false, timestamps: true }

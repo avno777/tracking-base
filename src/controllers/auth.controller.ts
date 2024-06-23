@@ -35,8 +35,10 @@ const AuthController = {
       if (!user._id) {
         throw new Error('User ID is undefined')
       }
-      const tokens = await authService.generateTokens(user._id, user.role)
-      return res.status(200).json({ message: 'Login successful', tokens, user })
+      //const tokens = await authService.generateTokens(user._id, user.role)
+      const { accessToken, refreshToken } = await authService.generateTokens(user._id, user.role)
+      await authService.pushRefreshToken(user._id, refreshToken)
+      return res.status(200).json({ message: 'Login successful', accessToken, user })
     } catch (error: any) {
       return res.status(500).json({ error: error.message })
     }

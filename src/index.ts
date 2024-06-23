@@ -4,12 +4,12 @@ import cors from 'cors'
 import compression from 'compression'
 import dotenv from 'dotenv'
 import routes from './routes'
-
-import dbConnection from './config/dbConnection'
+import { config } from './configs/config'
+import dbConnection from './configs/dbConnection'
 
 dotenv.config()
 
-const port: string | number = process.env.APP_PORT || 5000
+const port: string | number = config.port || 6060
 const app: Express = express()
 dbConnection()
 app.use(helmet())
