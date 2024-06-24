@@ -2,6 +2,8 @@ import express, { Express, Request, Response, NextFunction } from 'express'
 import helmet from 'helmet'
 import cors from 'cors'
 import compression from 'compression'
+import YAML from 'yamljs'
+import swaggerUi from 'swagger-ui-express'
 import dotenv from 'dotenv'
 import routes from './routes'
 import { config } from './configs/config'
@@ -31,8 +33,10 @@ app.use(function errorHandler(err: Error, req: Request, res: Response, next: Nex
   return res.status(500).send(err)
 })
 app.use(compression())
-app.use('/v1/api', routes)
 
+app.use('/v1/api', routes)
+const swaggerDocument = YAML.load('./swagger.yaml')
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
 const server = app.listen(port, () => {
   console.log(`Server running on port ${port}`)
 })
