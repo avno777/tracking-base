@@ -41,10 +41,6 @@ const accountSchema: Schema = new Schema(
       enum: ['customer', 'admin', 'supervisor'],
       default: 'admin'
     },
-    isLogin: {
-      type: Boolean,
-      default: false
-    },
     phone: {
       type: String
     },

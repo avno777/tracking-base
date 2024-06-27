@@ -2,7 +2,10 @@ import mongoose, { Schema, Document } from 'mongoose'
 
 interface IShop extends Document {
   shopName: string
-  accountId: mongoose.Types.ObjectId
+  address?: string
+  hotline?: string
+  email?: string
+  description?: string
 }
 
 const shopSchema: Schema = new Schema({
@@ -10,9 +13,17 @@ const shopSchema: Schema = new Schema({
     type: String,
     required: true
   },
-  accountId: {
-    type: mongoose.Types.ObjectId,
-    ref: 'AccountModel'
+  address: {
+    type: String
+  },
+  hotline: {
+    type: String
+  },
+  email: {
+    type: String
+  },
+  description: {
+    type: String
   }
 })
 

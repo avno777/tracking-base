@@ -34,12 +34,12 @@ const customerSchema: Schema = new Schema(
     address: {
       type: String
     },
-    company: {
+    contract: {
       type: String
     },
-    status: {
-      type: String
-    }
+    license: { type: String },
+    vehicle: { type: String },
+    availability: { type: String }
   },
   { versionKey: false, timestamps: true }
 )
