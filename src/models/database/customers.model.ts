@@ -4,12 +4,10 @@ export interface ICustomer extends Document {
   _id?: string
   fullname: string
   email: string
-  password: string
   phone?: string
-  nationCode?: string
   address?: string
-  status?: string
   company?: string
+  status?: string
 }
 
 const customerSchema: Schema = new Schema(

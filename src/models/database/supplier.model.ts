@@ -2,14 +2,11 @@ import mongoose, { Schema, Document } from 'mongoose'
 
 export interface ISupplier extends Document {
   _id?: string
-  fullname: string
+  name: string
   email: string
-  password: string
+  hotline: string
   phone?: string
-  nationCode?: string
   address?: string
-  status?: string
-  company?: string
 }
 
 const supplierSchema: Schema = new Schema(

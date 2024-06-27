@@ -4,12 +4,12 @@ export interface ICustomer extends Document {
   _id?: string
   fullname: string
   email: string
-  password: string
   phone?: string
-  nationCode?: string
   address?: string
-  status?: string
-  company?: string
+  contract?: string
+  license?: string
+  vehicle?: string
+  availability?: string
 }
 
 const customerSchema: Schema = new Schema(
@@ -37,6 +37,7 @@ const customerSchema: Schema = new Schema(
     contract: {
       type: String
     },
+    supplierId: { type: Schema.Types.ObjectId, ref: 'Supplier', required: true },
     license: { type: String },
     vehicle: { type: String },
     availability: { type: String }
