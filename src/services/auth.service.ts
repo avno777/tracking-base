@@ -50,7 +50,7 @@ const AuthService = {
     //   throw new Error(`Invalid fields: ${invalidFields.join(', ')}`)
     // }
 
-    const user: IAccount | null = await AccountModel.findOne(keyword).lean()
+    const user: IAccount | null = await accountModel.findOne(keyword).lean()
     console.log('user', user)
     return user
   },
@@ -62,12 +62,12 @@ const AuthService = {
       password: userBody.password
     }
 
-    const user: IAccount = await AccountModel.create(newUser)
+    const user: IAccount = await accountModel.create(newUser)
     return user
   },
 
   // setLogin: async (username: string): Promise<void> => {
-  //   await AccountModel.updateOne({ username }, { isLogin: true })
+  //   await accountModel.updateOne({ username }, { isLogin: true })
   // },
 
   generateTokens: async (_id: string, role: string) => {
@@ -84,7 +84,7 @@ const AuthService = {
   pushRefreshToken: async (_id: string, refreshToken: string) => {
     console.log('id', _id)
     console.log('refreshToken', refreshToken)
-    return await AccountModel.updateOne(
+    return await accountModel.updateOne(
       { _id },
       {
         $push: {
@@ -98,7 +98,7 @@ const AuthService = {
   },
 
   logout: async (email: string) => {
-    await AccountModel.updateMany({ email }, { $unset: { refreshToken: 1 } })
+    await accountModel.updateMany({ email }, { $unset: { refreshToken: 1 } })
   },
 
   refreshToken: async (refreshToken: string) => {
@@ -119,7 +119,7 @@ const AuthService = {
 
   changePassword: async (email: string, password: string) => {
     const hashPassword = await AuthService.hashedPassword(password)
-    await AccountModel.updateOne({ email }, { password: hashPassword })
+    await accountModel.updateOne({ email }, { password: hashPassword })
   },
 
   verifyAccessToken: async (accessToken: string) => {
