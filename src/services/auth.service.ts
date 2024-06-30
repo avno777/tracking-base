@@ -3,12 +3,11 @@ import * as jwt from 'jsonwebtoken'
 import fs from 'fs'
 import crypto from 'crypto'
 //import mongoose from 'mongoose'
-import AccountModel from '../models/database/accounts.models'
+import dotenv from 'dotenv'
+import accountModel from '../models/database/accounts.models'
 import { IAccount } from '../models/database/accounts.models'
 import { redis as redisClient } from '../configs/redis'
 import { config } from '../configs/config'
-
-import dotenv from 'dotenv'
 
 dotenv.config()
 interface UserBody {
