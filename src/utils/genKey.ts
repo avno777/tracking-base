@@ -1,7 +1,7 @@
 import * as cron from 'node-cron'
 import * as fs from 'fs'
 import * as crypto from 'crypto'
-import { AuthService } from '../services/auth.service'
+import AuthService from '../services/auth.service'
 import { redis as redisClient } from '../configs/redis'
 
 //const { redis: redisClient } = redisConfig

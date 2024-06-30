@@ -2,13 +2,11 @@ import * as bcrypt from 'bcrypt'
 import * as jwt from 'jsonwebtoken'
 import fs from 'fs'
 import crypto from 'crypto'
-//import mongoose from 'mongoose'
+import dotenv from 'dotenv'
 import accountModel from '../models/database/accounts.models'
 import { IAccount } from '../models/database/accounts.models'
 import { redis as redisClient } from '../configs/redis'
 import { config } from '../configs/config'
-
-import dotenv from 'dotenv'
 
 dotenv.config()
 interface UserBody {
@@ -21,29 +19,12 @@ let privateKey: crypto.KeyObject
 let publicKey0: crypto.KeyObject
 let publicKey1: crypto.KeyObject
 
-export const AuthService = {
-  // updatePrivateKey: async () => {
-  //   const privateKeyString =
-  //     'avsndbihfvaiusdfhbgosaiudfhvgsuifodhvaoiwusdfhgvauisdnbfvus9dhbnvi23ier89122jh4rt890yw3rcvn3hn897yc'
-  //   privateKey = crypto.createPrivateKey(privateKeyString)
-  // },
-  // updatePublicKey: async () => {
-  //   const publicKeyString = [
-  //     'dfqojiwihj4rfu8394tryuq98wcrehtg98qwrh9tgbnwq39q8tqy43797htrc9834yt9823yi24h39ur23249rtyu9384ytr928342ch9t2345nt982324598cty238945tcynm83w45ctyh832224mx29354ytc893245yn893472hn57tg84352cn5g7yc783245ynmx278tgy',
-  //     'ncaweuisofhqpwejqf890q343cumrx89234ytxc77822y534xt978y2938745yxtg872x2x345tyg78972345yutg9822xy3u45t8g9324y78t9yu3245789tygh783t452yhtgtg78532452yhtg9734yt942m325gh93452g7n'
-  //   ]
-  //   publicKey0 = crypto.createPublicKey(publicKeyString[0])
-  //   publicKey1 = crypto.createPublicKey(publicKeyString[1])
-  // },
+const AuthService = {
   updatePrivateKey: async () => {
     const privateKeyString = await fs.readFileSync('privateKey.pem', 'utf8')
     privateKey = crypto.createPrivateKey(privateKeyString)
   },
   updatePublicKey: async () => {
-    // const publicKeyString = [
-    //   'dfqojiwihj4rfu8394tryuq98wcrehtg98qwrh9tgbnwq39q8tqy43797htrc9834yt9823yi24h39ur23249rtyu9384ytr928342ch9t2345nt982324598cty238945tcynm83w45ctyh832224mx29354ytc893245yn893472hn57tg84352cn5g7yc783245ynmx278tgy',
-    //   'ncaweuisofhqpwejqf890q343cumrx89234ytxc77822y534xt978y2938745yxtg872x2x345tyg78972345yutg9822xy3u45t8g9324y78t9yu3245789tygh783t452yhtgtg78532452yhtg9734yt942m325gh93452g7n'
-    // ]
     const publicKeyString = await redisClient.lrange('publicKeys', 0, -1)
     publicKey0 = crypto.createPublicKey(publicKeyString[0])
     publicKey1 = crypto.createPublicKey(publicKeyString[1])
