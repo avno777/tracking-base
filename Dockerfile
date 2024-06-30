@@ -1,28 +1,19 @@
-FROM node:16-alpine AS pre-base
+FROM node:16-alpine
 
-WORKDIR /app
+# Set the working directory inside the container
+WORKDIR /usr/src/app
 
-COPY package.json .
+# Copy package.json and package-lock.json (if available)
+COPY package*.json ./
 
-# ----------------------------------------
-FROM pre-base AS build
+# Install dependencies
+RUN npm install
 
-WORKDIR /app
-
-COPY --from=pre-base /app/node_modules ./node_modules
+# Copy the rest of the application code
 COPY . .
 
-RUN npm install && npm build
+# Expose the port the app runs on
+EXPOSE 3000
 
-# ----------------------------------------
-FROM build as release
-
-WORKDIR /app
-
-COPY --from=build --chown=nodejs:nodejs /app /app
-
-USER nodejs
-
-EXPOSE 3010
-
-CMD ["npm", "start"]
+# Define the command to run the app
+CMD ["node", "index.js"]
