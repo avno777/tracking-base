@@ -7,6 +7,7 @@ dotenv.config({ path: path.join(__dirname, '../../.env') })
 interface EnvVars {
   NODE_ENV: 'production' | 'development'
   PORT: number
+  MONGODB_URL: string
   MONGODB_HOST: string
   MONGODB_PORT: number
   MONGODB_NAME: string
@@ -23,6 +24,7 @@ const envVarsSchema = Joi.object<EnvVars>()
   .keys({
     NODE_ENV: Joi.string().valid('production', 'development').required(),
     PORT: Joi.number().default(5000),
+    MONGODB_URL: Joi.string().required().description('Mongo DB url'),
     MONGODB_HOST: Joi.string().required().description('Mongo DB url'),
     MONGODB_PORT: Joi.number().required().default(27017).description('Mongo DB url'),
     MONGODB_NAME: Joi.string().required().description('Mongo DB Name'),
@@ -46,6 +48,7 @@ export const config = {
   env: envVars.NODE_ENV,
   port: envVars.PORT,
   mongoose: {
+    url: envVars.MONGODB_URL,
     host: envVars.MONGODB_HOST,
     port: envVars.MONGODB_PORT,
     database: envVars.MONGODB_NAME

@@ -78,19 +78,6 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/User'
-    post:
-      summary: Create a new user
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreateUser'
-      responses:
-        '201':
-          description: User created successfully
-        '400':
-          description: Bad request
 
   /user/{id}:
     get:
