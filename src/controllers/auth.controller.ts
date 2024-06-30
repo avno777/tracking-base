@@ -24,7 +24,9 @@ const AuthController = {
   loginController: async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
     try {
       const { email, password } = req.body
+      console.log('email', email)
       const user = await authService.findByKeyword({ email }, 'email')
+      console.log('user', user)
 
       if (!user) {
         return res.status(404).json({ message: 'Username not found' })
@@ -37,10 +39,12 @@ const AuthController = {
       }
       //const tokens = await authService.generateTokens(user._id, user.role)
       const { accessToken, refreshToken } = await authService.generateTokens(user._id, user.role)
+
       await authService.pushRefreshToken(user._id, refreshToken)
       return res.status(200).json({ message: 'Login successful', accessToken, user })
     } catch (error: any) {
-      return res.status(500).json({ error: error.message })
+      console.log('error', error)
+      return res.status(500).json({ error: error, message: 'Login failed' })
     }
   },
   changePasswordController: async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {

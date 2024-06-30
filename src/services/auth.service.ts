@@ -1,9 +1,9 @@
-import * as bcrypt from 'bcrypt'
+import bcrypt from 'bcryptjs'
 import * as jwt from 'jsonwebtoken'
 import fs from 'fs'
 import crypto from 'crypto'
 //import mongoose from 'mongoose'
-import accountModel from '../models/database/accounts.models'
+import AccountModel from '../models/database/accounts.models'
 import { IAccount } from '../models/database/accounts.models'
 import { redis as redisClient } from '../configs/redis'
 import { config } from '../configs/config'
@@ -54,21 +54,23 @@ export const AuthService = {
     return hashedPassword
   },
 
-  isPasswordMatch: async (user: IAccount, password: string): Promise<boolean> => {
-    const isMatch: boolean = await bcrypt.compare(password, user.password)
-    return isMatch
+  isPasswordMatch: (user: IAccount, password: string) => {
+    console.log('user', user.password)
+    console.log('password', password)
+    return bcrypt.compareSync(password, user.password)
   },
 
   findByKeyword: async (keyword: object, fields: string): Promise<IAccount | null> => {
-    const allowedFields: string[] = ['_id', 'email']
-    const keywordKeys: string[] = Object.keys(keyword)
+    // const allowedFields: string[] = ['_id', 'email']
+    // const keywordKeys: string[] = Object.keys(keyword)
 
-    const invalidFields: string[] = keywordKeys.filter((key) => !allowedFields.includes(key))
-    if (invalidFields.length > 0) {
-      throw new Error(`Invalid fields: ${invalidFields.join(', ')}`)
-    }
+    // const invalidFields: string[] = keywordKeys.filter((key) => !allowedFields.includes(key))
+    // if (invalidFields.length > 0) {
+    //   throw new Error(`Invalid fields: ${invalidFields.join(', ')}`)
+    // }
 
-    const user: IAccount | null = await accountModel.findOne(keyword).lean().select(fields)
+    const user: IAccount | null = await AccountModel.findOne(keyword).lean()
+    console.log('user', user)
     return user
   },
 
@@ -79,12 +81,12 @@ export const AuthService = {
       password: userBody.password
     }
 
-    const user: IAccount = await accountModel.create(newUser)
+    const user: IAccount = await AccountModel.create(newUser)
     return user
   },
 
   // setLogin: async (username: string): Promise<void> => {
-  //   await accountModel.updateOne({ username }, { isLogin: true })
+  //   await AccountModel.updateOne({ username }, { isLogin: true })
   // },
 
   generateTokens: async (_id: string, role: string) => {
@@ -99,11 +101,13 @@ export const AuthService = {
     }
   },
   pushRefreshToken: async (_id: string, refreshToken: string) => {
-    await accountModel.updateOne(
+    console.log('id', _id)
+    console.log('refreshToken', refreshToken)
+    return await AccountModel.updateOne(
       { _id },
       {
         $push: {
-          refreshTokens: {
+          refreshToken: {
             $each: [refreshToken],
             $slice: -2
           }
@@ -113,7 +117,7 @@ export const AuthService = {
   },
 
   logout: async (email: string) => {
-    await accountModel.updateMany({ email }, { $unset: { refreshTokens: 1 } })
+    await AccountModel.updateMany({ email }, { $unset: { refreshToken: 1 } })
   },
 
   refreshToken: async (refreshToken: string) => {
@@ -134,7 +138,7 @@ export const AuthService = {
 
   changePassword: async (email: string, password: string) => {
     const hashPassword = await AuthService.hashedPassword(password)
-    await accountModel.updateOne({ email }, { password: hashPassword })
+    await AccountModel.updateOne({ email }, { password: hashPassword })
   },
 
   verifyAccessToken: async (accessToken: string) => {

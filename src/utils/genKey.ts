@@ -7,8 +7,8 @@ import { redis as redisClient } from '../configs/redis'
 //const { redis: redisClient } = redisConfig
 const PUBLIC_KEYS_KEY = 'publicKeys'
 
-async function addPublicKeyToRedis(publicKey: crypto.KeyObject) {
-  const publicKeyString = publicKey.export({ type: 'spki', format: 'pem' }).toString()
+async function addPublicKeyToRedis(publicKey: any) {
+  const publicKeyString = publicKey.toString()
   const publicKeys = await redisClient.lrange(PUBLIC_KEYS_KEY, 0, -1)
 
   if (publicKeys.length === 2) {
@@ -31,14 +31,9 @@ async function generateKeyPairAndSave() {
       format: 'pem'
     }
   })
-  const publicKeyObject = crypto.createPublicKey({
-    key: Buffer.from(publicKey, 'base64'),
-    format: 'der',
-    type: 'spki'
-  })
 
-  await addPublicKeyToRedis(publicKeyObject)
-  await fs.promises.writeFile('privateKey.pem', privateKey)
+  await addPublicKeyToRedis(publicKey)
+  await fs.writeFileSync('privateKey.pem', privateKey)
 
   await AuthService.updatePrivateKey()
   await AuthService.updatePublicKey()
