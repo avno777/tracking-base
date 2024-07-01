@@ -13,7 +13,7 @@ interface Route {
 const defaultRoutes: Route[] = [
   { path: '/auth', route: authRoute },
   { path: '/customer', route: customerRoute },
-  { path: '/customer', route: orderRoute }
+  { path: '/order', route: orderRoute }
 ]
 
 defaultRoutes.forEach((route: Route) => {
