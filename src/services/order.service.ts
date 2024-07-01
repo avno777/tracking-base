@@ -1,19 +1,23 @@
 import { Request } from 'express'
-import inventoryModel from '../models/database/inventories.model'
+import orderModel from '../models/database/orders.model'
 import logger from '../configs/logger'
 import { FilterQuery } from 'mongoose'
+// import createTimestamp from '../config/createTimestamp'
+// import logger from '../config/winston'
+// import { ICustomer } from '../models/database/driver.model'
+// import { ITimeStamp } from '../models/interfaces/timeStamp.interface'
 
-interface IInventoryService {
+interface ICustomerService {
   createData(data: any): Promise<any>
   getData(req: Request): Promise<{ total: number; data: any[] }>
   getDataById(req: Request): Promise<any>
   updateDataById(req: Request): Promise<any>
   deleteDataById(req: Request): Promise<any>
 }
-const CustomerService: IInventoryService = {
+const CustomerService: ICustomerService = {
   async createData(data: any) {
     try {
-      const createdData = await inventoryModel.create(data)
+      const createdData = await orderModel.create(data)
       return createdData
     } catch (error) {
       logger.error('Error creating data:', error) // Xử lý lỗi cụ thể
@@ -21,7 +25,7 @@ const CustomerService: IInventoryService = {
     }
   },
   async getData(req: Request) {
-    const allowedFields = ['fullname', 'email', 'phone', 'address', 'company']
+    const allowedFields = ['orderCode', 'quantity', 'orderType', 'customerId', 'productId', 'supplierId', 'orderDate']
     const page = parseInt(req.query.page as string) || 1
     const limit = parseInt(req.query.limit as string) || 10
     const skip = (page - 1) * limit
@@ -29,11 +33,13 @@ const CustomerService: IInventoryService = {
     const conditions: FilterQuery<any>[] = allowedFields
       .map((field) => {
         if (
-          field === 'fullName' ||
-          field === 'email' ||
-          field === 'phone' ||
-          field === 'address' ||
-          field === 'company'
+          field === 'orderCode' ||
+          field === 'quantity' ||
+          field === 'orderType' ||
+          field === 'customerId' ||
+          field === 'productId' ||
+          field === 'supplierId' ||
+          field === 'orderDate'
         ) {
           if (req.query[field]) {
             return { [field]: { $regex: req.query[field], $options: 'i' } }
@@ -56,8 +62,8 @@ const CustomerService: IInventoryService = {
       })
     }
 
-    const _data = await inventoryModel.find({ $and: conditions }).skip(skip).limit(limit).lean().exec()
-    const count = await inventoryModel.countDocuments({ $and: conditions })
+    const _data = await orderModel.find({ $and: conditions }).skip(skip).limit(limit).lean().exec()
+    const count = await orderModel.countDocuments({ $and: conditions })
     const totalPages = Math.ceil(count / limit)
     return {
       total: count,
@@ -71,7 +77,7 @@ const CustomerService: IInventoryService = {
   async getDataById(req: Request) {
     try {
       const dataId = req.params.id
-      const data = await inventoryModel.findById(dataId)
+      const data = await orderModel.findById(dataId)
       return data
     } catch (error) {
       logger.error('Error creating data:', error) // Xử lý lỗi cụ thể
@@ -82,7 +88,7 @@ const CustomerService: IInventoryService = {
     try {
       const dataId = req.body.id ? req.body.id : req.params.id
       const data = req.body
-      const updatedData = await inventoryModel.findByIdAndUpdate(dataId, data, { new: true })
+      const updatedData = await orderModel.findByIdAndUpdate(dataId, data, { new: true })
       return updatedData
     } catch (error) {
       logger.error('Error creating data:', error) // Xử lý lỗi cụ thể
@@ -93,7 +99,7 @@ const CustomerService: IInventoryService = {
   async deleteDataById(req: Request) {
     try {
       const dataId = req.body.id ? req.body.id : req.params.id
-      await inventoryModel.findByIdAndDelete(dataId)
+      await orderModel.findByIdAndDelete(dataId)
     } catch (error) {
       logger.error('Error creating data:', error) // Xử lý lỗi cụ thể
       throw error

@@ -1,5 +1,7 @@
 import express, { Router } from 'express'
 import authRoute from './auth.route'
+import customerRoute from './customer.route'
+import orderRoute from './order.route'
 
 const router: Router = express.Router()
 
@@ -8,7 +10,11 @@ interface Route {
   route: Router
 }
 
-const defaultRoutes: Route[] = [{ path: '/auth', route: authRoute }]
+const defaultRoutes: Route[] = [
+  { path: '/auth', route: authRoute },
+  { path: '/customer', route: customerRoute },
+  { path: '/customer', route: orderRoute }
+]
 
 defaultRoutes.forEach((route: Route) => {
   router.use(route.path, route.route)

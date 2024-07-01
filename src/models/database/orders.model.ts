@@ -7,13 +7,14 @@ interface IOrder extends Document {
   supplierId: Schema.Types.ObjectId
   quantity: number
   totalAmount: number
-  status: string
+  status?: string
   orderType: string
   orderDate: Date
   location: {
     type: string
     coordinates: number[]
   }
+  trackingTime: string
 }
 
 const orderSchema = new Schema<IOrder>({
@@ -29,7 +30,8 @@ const orderSchema = new Schema<IOrder>({
   location: {
     type: { type: String, enum: ['Point'], required: true },
     coordinates: { type: [Number], required: true }
-  }
+  },
+  trackingTime: { type: String }
 })
 
 orderSchema.index({ location: '2dsphere' })
