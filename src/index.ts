@@ -14,7 +14,7 @@ dotenv.config()
 const port: string | number = config.port || 6060
 const app: Express = express()
 dbConnection()
-app.use(helmet())
+
 app.use(express.json({ limit: '50mb' }))
 app.use(express.urlencoded({ limit: '100mb', extended: true }))
 
@@ -37,6 +37,7 @@ app.use(compression())
 app.use('/v1/api', routes)
 const swaggerDocument = YAML.load('./swagger.yaml')
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
+app.use(helmet())
 const server = app.listen(port, () => {
   console.log(`Server running on port ${port}`)
 })
