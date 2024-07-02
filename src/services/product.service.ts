@@ -38,10 +38,6 @@ const CustomerService: IProductService = {
           if (req.query[field]) {
             return { [field]: { $regex: req.query[field], $options: 'i' } }
           }
-        } else if (field === 'allowedElevator') {
-          if (req.query[field]) {
-            return { [field]: { $in: [req.query[field]] } }
-          }
         } else if (req.query[field]) {
           return { [field]: req.query[field] }
         }
