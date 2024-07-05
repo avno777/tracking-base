@@ -6,5 +6,5 @@ dist/
 # Keys
 privateKey.pem
 
-combine.log
+combined.log
 error.log
