@@ -1,5 +1,5 @@
 import { Request } from 'express'
-import accountModel from '../models/database/accounts.models'
+import supplierModel from '../models/database/supplier.model'
 import logger from '../configs/logger'
 import { FilterQuery } from 'mongoose'
 // import createTimestamp from '../config/createTimestamp'
@@ -7,17 +7,17 @@ import { FilterQuery } from 'mongoose'
 // import { ICustomer } from '../models/database/driver.model'
 // import { ITimeStamp } from '../models/interfaces/timeStamp.interface'
 
-interface IAccountService {
+interface ICustomerService {
   createData(data: any): Promise<any>
   getData(req: Request): Promise<{ total: number; data: any[] }>
   getDataById(req: Request): Promise<any>
   updateDataById(req: Request): Promise<any>
   deleteDataById(req: Request): Promise<any>
 }
-const AccountService: IAccountService = {
+const CustomerService: ICustomerService = {
   async createData(data: any) {
     try {
-      const createdData = await accountModel.create(data)
+      const createdData = await supplierModel.create(data)
       return createdData
     } catch (error) {
       logger.error('Error creating data:', error) // Xử lý lỗi cụ thể
@@ -25,14 +25,20 @@ const AccountService: IAccountService = {
     }
   },
   async getData(req: Request) {
-    const allowedFields = ['fullname', 'email', 'phone', 'address']
+    const allowedFields = ['fullname', 'email', 'phone', 'address', 'company']
     const page = parseInt(req.query.page as string) || 1
     const limit = parseInt(req.query.limit as string) || 10
     const skip = (page - 1) * limit
 
     const conditions: FilterQuery<any>[] = allowedFields
       .map((field) => {
-        if (field === 'fullName' || field === 'email' || field === 'phone' || field === 'address') {
+        if (
+          field === 'fullName' ||
+          field === 'email' ||
+          field === 'phone' ||
+          field === 'address' ||
+          field === 'company'
+        ) {
           if (req.query[field]) {
             return { [field]: { $regex: req.query[field], $options: 'i' } }
           }
@@ -58,8 +64,8 @@ const AccountService: IAccountService = {
       })
     }
 
-    const _data = await accountModel.find({ $and: conditions }).skip(skip).limit(limit).lean().exec()
-    const count = await accountModel.countDocuments({ $and: conditions })
+    const _data = await supplierModel.find({ $and: conditions }).skip(skip).limit(limit).lean().exec()
+    const count = await supplierModel.countDocuments({ $and: conditions })
     const totalPages = Math.ceil(count / limit)
     return {
       total: count,
@@ -73,7 +79,7 @@ const AccountService: IAccountService = {
   async getDataById(req: Request) {
     try {
       const dataId = req.params.id
-      const data = await accountModel.findById(dataId)
+      const data = await supplierModel.findById(dataId)
       return data
     } catch (error) {
       logger.error('Error creating data:', error) // Xử lý lỗi cụ thể
@@ -84,7 +90,7 @@ const AccountService: IAccountService = {
     try {
       const dataId = req.body.id ? req.body.id : req.params.id
       const data = req.body
-      const updatedData = await accountModel.findByIdAndUpdate(dataId, data, { new: true })
+      const updatedData = await supplierModel.findByIdAndUpdate(dataId, data, { new: true })
       return updatedData
     } catch (error) {
       logger.error('Error creating data:', error) // Xử lý lỗi cụ thể
@@ -95,7 +101,7 @@ const AccountService: IAccountService = {
   async deleteDataById(req: Request) {
     try {
       const dataId = req.body.id ? req.body.id : req.params.id
-      await accountModel.findByIdAndDelete(dataId)
+      await supplierModel.findByIdAndDelete(dataId)
     } catch (error) {
       logger.error('Error creating data:', error) // Xử lý lỗi cụ thể
       throw error
@@ -103,4 +109,4 @@ const AccountService: IAccountService = {
   }
 }
 
-export default AccountService
+export default CustomerService

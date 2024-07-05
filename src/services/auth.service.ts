@@ -70,10 +70,10 @@ const AuthService = {
   //   await accountModel.updateOne({ username }, { isLogin: true })
   // },
 
-  generateTokens: async (_id: string, role: string) => {
+  generateTokens: async (_id: string) => {
     const [accessToken, refreshToken] = await Promise.all([
-      jwt.sign({ _id, role }, privateKey, { expiresIn: config.jwt.accessExpirationMinutes, algorithm: 'RS256' }),
-      jwt.sign({ _id, role }, privateKey, { expiresIn: config.jwt.refreshExpirationDays, algorithm: 'RS256' })
+      jwt.sign({ _id }, privateKey, { expiresIn: config.jwt.accessExpirationMinutes, algorithm: 'RS256' }),
+      jwt.sign({ _id }, privateKey, { expiresIn: config.jwt.refreshExpirationDays, algorithm: 'RS256' })
     ])
 
     return {

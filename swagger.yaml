@@ -133,6 +133,9 @@ paths:
           description: User not found
 
 components:
+  requestBody:
+  response:
+
   schemas:
     # User schema
     User:
@@ -179,7 +182,6 @@ components:
           type: string
         password:
           type: string
-
     # LoginUser schema
     LoginUser:
       type: object
@@ -188,7 +190,6 @@ components:
           type: string
         password:
           type: string
-
     # ChangePassword schema
     ChangePassword:
       type: object
@@ -226,3 +227,30 @@ components:
           type: string
         state:
           type: string
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  parameters:
+    pageParam: # Can be referenced via '#/components/parameters/offsetParam'
+      name: page
+      in: query
+      description: Number of page to skip before returning the results.
+      required: false
+      schema:
+        type: integer
+        format: int32
+        minimum: 0
+        default: 0
+    limitParam: # Can be referenced as '#/components/parameters/limitParam'
+      name: limit
+      in: query
+      description: Maximum number of items to return.
+      required: false
+      schema:
+        type: integer
+        format: int32
+        minimum: 1
+        maximum: 100
+        default: 10
