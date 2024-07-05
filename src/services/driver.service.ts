@@ -1,5 +1,5 @@
 import { Request } from 'express'
-import accountModel from '../models/database/accounts.models'
+import driverModel from '../models/database/driver.model'
 import logger from '../configs/logger'
 import { FilterQuery } from 'mongoose'
 // import createTimestamp from '../config/createTimestamp'
@@ -7,17 +7,17 @@ import { FilterQuery } from 'mongoose'
 // import { ICustomer } from '../models/database/driver.model'
 // import { ITimeStamp } from '../models/interfaces/timeStamp.interface'
 
-interface IAccountService {
+interface ICustomerService {
   createData(data: any): Promise<any>
   getData(req: Request): Promise<{ total: number; data: any[] }>
   getDataById(req: Request): Promise<any>
   updateDataById(req: Request): Promise<any>
   deleteDataById(req: Request): Promise<any>
 }
-const AccountService: IAccountService = {
+const CustomerService: ICustomerService = {
   async createData(data: any) {
     try {
-      const createdData = await accountModel.create(data)
+      const createdData = await driverModel.create(data)
       return createdData
     } catch (error) {
       logger.error('Error creating data:', error) // Xử lý lỗi cụ thể
@@ -58,8 +58,8 @@ const AccountService: IAccountService = {
       })
     }
 
-    const _data = await accountModel.find({ $and: conditions }).skip(skip).limit(limit).lean().exec()
-    const count = await accountModel.countDocuments({ $and: conditions })
+    const _data = await driverModel.find({ $and: conditions }).skip(skip).limit(limit).lean().exec()
+    const count = await driverModel.countDocuments({ $and: conditions })
     const totalPages = Math.ceil(count / limit)
     return {
       total: count,
@@ -73,7 +73,7 @@ const AccountService: IAccountService = {
   async getDataById(req: Request) {
     try {
       const dataId = req.params.id
-      const data = await accountModel.findById(dataId)
+      const data = await driverModel.findById(dataId)
       return data
     } catch (error) {
       logger.error('Error creating data:', error) // Xử lý lỗi cụ thể
@@ -84,7 +84,7 @@ const AccountService: IAccountService = {
     try {
       const dataId = req.body.id ? req.body.id : req.params.id
       const data = req.body
-      const updatedData = await accountModel.findByIdAndUpdate(dataId, data, { new: true })
+      const updatedData = await driverModel.findByIdAndUpdate(dataId, data, { new: true })
       return updatedData
     } catch (error) {
       logger.error('Error creating data:', error) // Xử lý lỗi cụ thể
@@ -95,7 +95,7 @@ const AccountService: IAccountService = {
   async deleteDataById(req: Request) {
     try {
       const dataId = req.body.id ? req.body.id : req.params.id
-      await accountModel.findByIdAndDelete(dataId)
+      await driverModel.findByIdAndDelete(dataId)
     } catch (error) {
       logger.error('Error creating data:', error) // Xử lý lỗi cụ thể
       throw error
@@ -103,4 +103,4 @@ const AccountService: IAccountService = {
   }
 }
 
-export default AccountService
+export default CustomerService

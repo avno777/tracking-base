@@ -16,7 +16,7 @@ const AuthController = {
         password: hashedPassword
       })
 
-      return res.status(201).json({ message: 'User registered successfully', newUser })
+      return res.status(201).json({ message: 'User registered successfully', email: { email } })
     } catch (error: any) {
       return res.status(500).json({ error: error.message })
     }
@@ -38,10 +38,14 @@ const AuthController = {
         throw new Error('User ID is undefined')
       }
       //const tokens = await authService.generateTokens(user._id, user.role)
-      const { accessToken, refreshToken } = await authService.generateTokens(user._id, user.role)
-
+      const { accessToken, refreshToken } = await authService.generateTokens(user._id)
+      const { _id, fullname, avatarUrl, phone, nationCode, address, city, country, state } = user
       await authService.pushRefreshToken(user._id, refreshToken)
-      return res.status(200).json({ message: 'Login successful', accessToken, user })
+      return res.status(200).json({
+        message: 'Login successful',
+        accessToken: accessToken,
+        user: { _id, fullname, avatarUrl, phone, nationCode, address, city, country, state }
+      })
     } catch (error: any) {
       console.log('error', error)
       return res.status(500).json({ error: error, message: 'Login failed' })
@@ -69,6 +73,10 @@ const AuthController = {
     } catch (error: any) {
       return res.status(500).json({ error: error.message })
     }
+  },
+  refreshTokenController: async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
+    const accessToken = await authService.refreshToken(req.body.refreshToken)
+    return res.status(200).json({ message: 'Refresh token successfully', accessToken })
   }
 }
 
