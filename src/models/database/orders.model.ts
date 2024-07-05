@@ -1,20 +1,21 @@
 import { Schema, model, Document } from 'mongoose'
 
 interface IOrder extends Document {
-  orderCode: string
-  customerId: Schema.Types.ObjectId
-  productId: Schema.Types.ObjectId
-  supplierId: Schema.Types.ObjectId
-  quantity: number
+  _id?: string
+  orderCode?: string
+  customerId?: Schema.Types.ObjectId
+  productId?: Schema.Types.ObjectId
+  supplierId?: Schema.Types.ObjectId
+  quantity?: number
   totalAmount: number
   status?: string
-  orderType: string
+  orderType?: string
   orderDate: Date
-  location: {
+  location?: {
     type: string
     coordinates: number[]
   }
-  trackingTime: string
+  trackingTime?: string
 }
 
 const orderSchema = new Schema<IOrder>({

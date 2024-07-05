@@ -7,14 +7,15 @@ import { FilterQuery } from 'mongoose'
 // import { ICustomer } from '../models/database/driver.model'
 // import { ITimeStamp } from '../models/interfaces/timeStamp.interface'
 
-interface ICustomerService {
+interface IOrderService {
   createData(data: any): Promise<any>
   getData(req: Request): Promise<{ total: number; data: any[] }>
   getDataById(req: Request): Promise<any>
   updateDataById(req: Request): Promise<any>
   deleteDataById(req: Request): Promise<any>
+  //getLocation(req: Request): Promise<any>
 }
-const CustomerService: ICustomerService = {
+const OrderService: IOrderService = {
   async createData(data: any) {
     try {
       const createdData = await orderModel.create(data)
@@ -105,6 +106,20 @@ const CustomerService: ICustomerService = {
       throw error
     }
   }
+  // async getLocation(req: Request) {
+  //   try {
+  //     const dataId = req.params.id
+  //     const data = await orderModel.findById(dataId)
+  //     let result
+  //     if(data !== null) {
+  //       result = { data.location, data.trackingTime }
+  //     }
+  //     return result
+  //   } catch (error) {
+  //     logger.error('Error creating data:', error) // Xử lý lỗi cụ thể
+  //     throw error
+  //   }
+  // }
 }
 
-export default CustomerService
+export default OrderService
