@@ -2,6 +2,7 @@ import { Request } from 'express'
 import accountModel from '../models/database/accounts.models'
 import logger from '../configs/logger'
 import { FilterQuery } from 'mongoose'
+import { IRequest } from '~/models/interfaces/req.interface'
 // import createTimestamp from '../config/createTimestamp'
 // import logger from '../config/winston'
 // import { ICustomer } from '../models/database/driver.model'
@@ -10,10 +11,16 @@ import { FilterQuery } from 'mongoose'
 interface IAccountService {
   createData(data: any): Promise<any>
   getData(req: Request): Promise<{ total: number; data: any[] }>
-  getDataById(req: Request): Promise<any>
+  getDataById(_id: string): Promise<any>
   updateDataById(req: Request): Promise<any>
   deleteDataById(req: Request): Promise<any>
 }
+interface RequestWithUser extends Request {
+  user?: {
+    _id: string
+  }
+}
+
 const AccountService: IAccountService = {
   async createData(data: any) {
     try {
@@ -70,10 +77,9 @@ const AccountService: IAccountService = {
     }
   },
 
-  async getDataById(req: Request) {
+  async getDataById(_id: string) {
     try {
-      const dataId = req.params.id
-      const data = await accountModel.findById(dataId)
+      const data = await accountModel.findById(_id)
       return data
     } catch (error) {
       logger.error('Error creating data:', error) // Xử lý lỗi cụ thể

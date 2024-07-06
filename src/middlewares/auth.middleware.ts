@@ -3,14 +3,15 @@ import { JwtPayload } from 'jsonwebtoken'
 import authService from '../services/auth.service'
 import { IAccount } from '../models/database/accounts.models'
 import accountService from '../services/account.service'
+import { IRequest } from '~/models/interfaces/req.interface'
 
-interface RequestWithUser extends Request {
-  user?: {
-    _id: string
-  }
-}
+// interface RequestWithUser extends Request {
+//   user?: {
+//     _id: string
+//   }
+// }
 
-const authMiddleware = async (req: RequestWithUser, res: Response, next: NextFunction): Promise<Response | void> => {
+const authMiddleware = async (req: IRequest, res: Response, next: NextFunction): Promise<Response | void> => {
   const authHeader = req.headers.authorization
 
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -29,7 +30,7 @@ const authMiddleware = async (req: RequestWithUser, res: Response, next: NextFun
 }
 
 const authorizeRoles = (...allowedRoles: string[]) => {
-  return async (req: RequestWithUser, res: Response, next: NextFunction): Promise<Response | void> => {
+  return async (req: IRequest, res: Response, next: NextFunction): Promise<Response | void> => {
     try {
       const accountId = req.user?._id
       const user: IAccount | null = await authService.findByKeyword({ accountId }, '_id')

@@ -6,4 +6,7 @@ export interface IRequest extends Request {
   body: {
     [key: string]: any
   }
+  user?: {
+    _id: string
+  }
 }
