@@ -5,3 +5,7 @@ dist/
 !.env*.example
 # Keys
 privateKey.pem
+
+# Logs
+combined.log
+error.log

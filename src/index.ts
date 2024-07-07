@@ -6,6 +6,7 @@ import dotenv from 'dotenv'
 import routes from './routes'
 import { config } from './configs/config'
 import dbConnection from './configs/dbConnection'
+import authLimiter from './middlewares/rateLimit.middleware'
 import './utils/genKey'
 dotenv.config()
 
@@ -31,7 +32,7 @@ app.use(function errorHandler(err: Error, req: Request, res: Response, next: Nex
   return res.status(500).send(err)
 })
 app.use(compression())
-app.use('/v1/api', routes)
+app.use('/v1/api', authLimiter, routes)
 
 const server = app.listen(port, () => {
   console.log(`Server running on port ${port}`)
