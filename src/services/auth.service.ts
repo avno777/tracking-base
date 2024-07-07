@@ -2,13 +2,11 @@ import bcrypt from 'bcryptjs'
 import * as jwt from 'jsonwebtoken'
 import fs from 'fs'
 import crypto from 'crypto'
-//import mongoose from 'mongoose'
-import AccountModel from '../models/database/accounts.models'
+import dotenv from 'dotenv'
+import accountModel from '../models/database/accounts.models'
 import { IAccount } from '../models/database/accounts.models'
 import { redis as redisClient } from '../configs/redis'
 import { config } from '../configs/config'
-
-import dotenv from 'dotenv'
 
 dotenv.config()
 interface UserBody {
@@ -21,29 +19,12 @@ let privateKey: crypto.KeyObject
 let publicKey0: crypto.KeyObject
 let publicKey1: crypto.KeyObject
 
-export const AuthService = {
-  // updatePrivateKey: async () => {
-  //   const privateKeyString =
-  //     'avsndbihfvaiusdfhbgosaiudfhvgsuifodhvaoiwusdfhgvauisdnbfvus9dhbnvi23ier89122jh4rt890yw3rcvn3hn897yc'
-  //   privateKey = crypto.createPrivateKey(privateKeyString)
-  // },
-  // updatePublicKey: async () => {
-  //   const publicKeyString = [
-  //     'dfqojiwihj4rfu8394tryuq98wcrehtg98qwrh9tgbnwq39q8tqy43797htrc9834yt9823yi24h39ur23249rtyu9384ytr928342ch9t2345nt982324598cty238945tcynm83w45ctyh832224mx29354ytc893245yn893472hn57tg84352cn5g7yc783245ynmx278tgy',
-  //     'ncaweuisofhqpwejqf890q343cumrx89234ytxc77822y534xt978y2938745yxtg872x2x345tyg78972345yutg9822xy3u45t8g9324y78t9yu3245789tygh783t452yhtgtg78532452yhtg9734yt942m325gh93452g7n'
-  //   ]
-  //   publicKey0 = crypto.createPublicKey(publicKeyString[0])
-  //   publicKey1 = crypto.createPublicKey(publicKeyString[1])
-  // },
+const AuthService = {
   updatePrivateKey: async () => {
     const privateKeyString = await fs.readFileSync('privateKey.pem', 'utf8')
     privateKey = crypto.createPrivateKey(privateKeyString)
   },
   updatePublicKey: async () => {
-    // const publicKeyString = [
-    //   'dfqojiwihj4rfu8394tryuq98wcrehtg98qwrh9tgbnwq39q8tqy43797htrc9834yt9823yi24h39ur23249rtyu9384ytr928342ch9t2345nt982324598cty238945tcynm83w45ctyh832224mx29354ytc893245yn893472hn57tg84352cn5g7yc783245ynmx278tgy',
-    //   'ncaweuisofhqpwejqf890q343cumrx89234ytxc77822y534xt978y2938745yxtg872x2x345tyg78972345yutg9822xy3u45t8g9324y78t9yu3245789tygh783t452yhtgtg78532452yhtg9734yt942m325gh93452g7n'
-    // ]
     const publicKeyString = await redisClient.lrange('publicKeys', 0, -1)
     publicKey0 = crypto.createPublicKey(publicKeyString[0])
     publicKey1 = crypto.createPublicKey(publicKeyString[1])
@@ -69,7 +50,7 @@ export const AuthService = {
     //   throw new Error(`Invalid fields: ${invalidFields.join(', ')}`)
     // }
 
-    const user: IAccount | null = await AccountModel.findOne(keyword).lean()
+    const user: IAccount | null = await accountModel.findOne(keyword).lean()
     console.log('user', user)
     return user
   },
@@ -81,18 +62,18 @@ export const AuthService = {
       password: userBody.password
     }
 
-    const user: IAccount = await AccountModel.create(newUser)
+    const user: IAccount = await accountModel.create(newUser)
     return user
   },
 
   // setLogin: async (username: string): Promise<void> => {
-  //   await AccountModel.updateOne({ username }, { isLogin: true })
+  //   await accountModel.updateOne({ username }, { isLogin: true })
   // },
 
-  generateTokens: async (_id: string, role: string) => {
+  generateTokens: async (_id: string) => {
     const [accessToken, refreshToken] = await Promise.all([
-      jwt.sign({ _id, role }, privateKey, { expiresIn: config.jwt.accessExpirationMinutes, algorithm: 'RS256' }),
-      jwt.sign({ _id, role }, privateKey, { expiresIn: config.jwt.refreshExpirationDays, algorithm: 'RS256' })
+      jwt.sign({ _id }, privateKey, { expiresIn: config.jwt.accessExpirationMinutes, algorithm: 'RS256' }),
+      jwt.sign({ _id }, privateKey, { expiresIn: config.jwt.refreshExpirationDays, algorithm: 'RS256' })
     ])
 
     return {
@@ -103,7 +84,7 @@ export const AuthService = {
   pushRefreshToken: async (_id: string, refreshToken: string) => {
     console.log('id', _id)
     console.log('refreshToken', refreshToken)
-    return await AccountModel.updateOne(
+    return await accountModel.updateOne(
       { _id },
       {
         $push: {
@@ -117,7 +98,7 @@ export const AuthService = {
   },
 
   logout: async (email: string) => {
-    await AccountModel.updateMany({ email }, { $unset: { refreshToken: 1 } })
+    await accountModel.updateMany({ email }, { $unset: { refreshToken: 1 } })
   },
 
   refreshToken: async (refreshToken: string) => {
@@ -138,7 +119,7 @@ export const AuthService = {
 
   changePassword: async (email: string, password: string) => {
     const hashPassword = await AuthService.hashedPassword(password)
-    await AccountModel.updateOne({ email }, { password: hashPassword })
+    await accountModel.updateOne({ email }, { password: hashPassword })
   },
 
   verifyAccessToken: async (accessToken: string) => {

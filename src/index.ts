@@ -2,6 +2,8 @@ import express, { Express, Request, Response, NextFunction } from 'express'
 import helmet from 'helmet'
 import cors from 'cors'
 import compression from 'compression'
+import YAML from 'yamljs'
+import swaggerUi from 'swagger-ui-express'
 import dotenv from 'dotenv'
 import routes from './routes'
 import { config } from './configs/config'
@@ -13,7 +15,7 @@ dotenv.config()
 const port: string | number = config.port || 6060
 const app: Express = express()
 dbConnection()
-app.use(helmet())
+
 app.use(express.json({ limit: '50mb' }))
 app.use(express.urlencoded({ limit: '100mb', extended: true }))
 
@@ -32,7 +34,7 @@ app.use(function errorHandler(err: Error, req: Request, res: Response, next: Nex
   return res.status(500).send(err)
 })
 app.use(compression())
-app.use('/v1/api', authLimiter, routes)
+app.use('/v1/api', routes)
 
 const server = app.listen(port, () => {
   console.log(`Server running on port ${port}`)

@@ -6,8 +6,10 @@ export interface ICustomer extends Document {
   email: string
   phone?: string
   address?: string
-  company?: string
-  status?: string
+  contract?: string
+  license?: string
+  vehicle?: string
+  availability?: string
 }
 
 const customerSchema: Schema = new Schema(
@@ -32,12 +34,13 @@ const customerSchema: Schema = new Schema(
     address: {
       type: String
     },
-    company: {
+    contract: {
       type: String
     },
-    status: {
-      type: String
-    }
+    supplierId: { type: Schema.Types.ObjectId, ref: 'Supplier', required: true },
+    license: { type: String },
+    vehicle: { type: String },
+    availability: { type: String }
   },
   { versionKey: false, timestamps: true }
 )

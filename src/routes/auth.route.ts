@@ -6,6 +6,7 @@ const router: Router = express.Router()
 
 router.post('/register', authController.registerController)
 router.post('/login', authController.loginController)
+router.post('/refresh-token', authMiddleware, authController.refreshTokenController)
 router.post(
   '/change-password',
   authMiddleware,
