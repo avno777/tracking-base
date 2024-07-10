@@ -18,6 +18,11 @@ interface EnvVars {
   REDIS_PASSWORD: string
   LOG_FORMAT: string
   LOG_DIR: string
+  SMTP_HOST: string
+  SMTP_PORT: string
+  SMTP_USERNAME: string
+  SMTP_PASSWORD: string
+  EMAIL_FROM: string
 }
 
 const envVarsSchema = Joi.object<EnvVars>()
@@ -34,7 +39,12 @@ const envVarsSchema = Joi.object<EnvVars>()
     REDIS_PORT: Joi.number().description('Redis port'),
     REDIS_PASSWORD: Joi.string().description('Redis password'),
     LOG_FORMAT: Joi.string().description('logger format'),
-    LOG_DIR: Joi.string().description('logger directory')
+    LOG_DIR: Joi.string().description('logger directory'),
+    SMTP_HOST: Joi.string().description('server that will send the emails'),
+    SMTP_PORT: Joi.number().description('port to connect to the email server'),
+    SMTP_USERNAME: Joi.string().description('username for email server'),
+    SMTP_PASSWORD: Joi.string().description('password for email server'),
+    EMAIL_FROM: Joi.string().description('the from field in the emails sent by the app')
   })
   .unknown()
 
@@ -65,5 +75,12 @@ export const config = {
   log: {
     format: envVars.LOG_FORMAT,
     dir: envVars.LOG_DIR
+  },
+  mail: {
+    host: envVars.SMTP_HOST,
+    port: envVars.SMTP_PORT,
+    username: envVars.SMTP_USERNAME,
+    password: envVars.SMTP_PASSWORD,
+    email: envVars.EMAIL_FROM
   }
 }

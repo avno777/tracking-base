@@ -1,0 +1,28 @@
+import nodemailer, { Transporter, SendMailOptions } from 'nodemailer'
+import { config } from '../configs/config'
+interface EmailConfig {
+  smtp: {
+    host: string
+    port: number
+    secure: boolean
+    auth: {
+      user: string
+      pass: string
+    }
+  }
+  from: string
+}
+
+const transport: Transporter = nodemailer.createTransport(config.mail.email)
+
+const sendEmail = async (to: string, subject: string, emailTemplate: string): Promise<void> => {
+  const options: SendMailOptions = {
+    from: config.mail.email,
+    to,
+    subject,
+    html: emailTemplate
+  }
+  await transport.sendMail(options)
+}
+
+export { transport, sendEmail }

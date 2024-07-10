@@ -6,7 +6,7 @@ export interface IAccount extends Document {
   email: string
   password: string
   avatarUrl?: string
-  role: 'customer' | 'admin' | 'supervisor'
+  role: 'Retailers' | 'Logistic ' | 'Manufacturing'
   refreshToken?: [string]
   phone?: string
   nationCode?: string
@@ -38,8 +38,8 @@ const accountSchema: Schema = new Schema(
     },
     role: {
       type: String,
-      enum: ['customer', 'admin', 'supervisor'],
-      default: 'admin'
+      enum: ['Retailers', 'Logistic', 'Manufacturing'],
+      default: 'Retailers'
     },
     phone: {
       type: String

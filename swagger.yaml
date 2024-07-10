@@ -5,14 +5,16 @@ info:
   description: API for user authentication and management
 servers:
   - url: http://localhost:6061
-schemes:
-  - https
-  - http
+# schemes:
+# - https
+# - http
 
 # Authentication APIs
 paths:
   /auth/register:
     post:
+      tags:
+        - 'Authentication'
       summary: Register a new user
       requestBody:
         required: true
@@ -23,12 +25,34 @@ paths:
       responses:
         '201':
           description: User registered successfully
-        '400':
-          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  email:
+                    type: string
+              example:
+                message: 'User registered successfully'
+                email: 'user@gmail.com'
+        '404':
+          description: Email for register is used
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseMessage'
+              example:
+                message: 'Email existed !!!'
+        '500':
+          $ref: '#/components/responses/500InternalServer'
 
   /auth/login:
     post:
       summary: Login a user
+      tags:
+        - 'Authentication'
       requestBody:
         required: true
         content:
@@ -38,37 +62,259 @@ paths:
       responses:
         '200':
           description: User logged in successfully
-        '401':
-          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  accessToken:
+                    type: string
+                  refreshToken:
+                    type: string
+                  user:
+                    type: object
+                    properties:
+                      _id:
+                        type: string
+                      fullname:
+                        type: string
+                      avatarUrl:
+                        type: string
+                      phone:
+                        type: string
+                      nationCode:
+                        type: string
+                      address:
+                        type: string
+                      city:
+                        type: string
+                      country:
+                        type: string
+                      state:
+                        type: string
+              example:
+                message: 'Login successful'
+                accessToken: 'access token'
+                refreshToken: 'refresh token'
+                user:
+                  _id: 'objectId'
+                  fullname: 'Nguyen A'
+                  avatarUrl: ''
+                  phone: '0909090909'
+                  nationCode: '+84'
+                  address: 'Hanoi, Vietnam'
+                  city: 'Hanoi'
+                  country: 'Vietnam'
+                  state: ''
+        '404':
+          description: Email for login is not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseMessage'
+              example:
+                message: 'Email not found !!!'
+        '402':
+          description: Password is invalid
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseMessage'
+              example:
+                message: 'Invalid password'
+        '500':
+          $ref: '#/components/responses/500InternalServer'
 
   /auth/change-password:
     post:
       summary: Change user password
+      tags:
+        - 'Authentication'
+      security:
+        - bearerAuth: []
       requestBody:
         required: true
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/ChangePassword'
+            example:
+              oldPassword: 'old password'
+              newPassword: 'new password'
       responses:
         '200':
           description: Password changed successfully
-        '400':
-          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+              example:
+                message: 'Password changed successfully'
+        '404':
+          $ref: '#/components/responses/404NotFound'
         '401':
-          description: Unauthorized
-
+          $ref: '#/components/responses/401Unauthorized'
+        '500':
+          $ref: '#/components/responses/500InternalServer'
   /auth/logout:
     post:
       summary: Logout a user
+      tags:
+        - 'Authentication'
       responses:
         '200':
           description: User logged out successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+              example:
+                message: 'Logout successful'
+        '404':
+          $ref: '#/components/responses/404NotFound'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+        '500':
+          $ref: '#/components/responses/500InternalServer'
+
+  /account/user-info:
+    get:
+      summary: Get account information
+      tags:
+        - User Info
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Get info of an account
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserInfo'
+              example:
+                _id: 'objectId'
+                fullname: 'Nguyen A'
+                email: 'test@gmail.com'
+                avatarUrl: ''
+                phone: '0909090909'
+                nationCode: '+84'
+                address: 'Hanoi, Vietnam'
+                city: 'Hanoi'
+                country: 'Vietnam'
+                state: ''
+        '404':
+          $ref: '#/components/responses/404NotFound'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+        '500':
+          $ref: '#/components/responses/500InternalServer'
+    put:
+      summary: Update account information
+      tags:
+        - User Info
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserInfo'
+            example:
+              fullname: 'Nguyen A'
+              avatarUrl: ''
+              phone: '0909090909'
+              nationCode: '+84'
+              address: 'Hanoi, Vietnam'
+              city: 'Hanoi'
+              country: 'Vietnam'
+              state: 'Ha Dong'
+      responses:
+        '200':
+          description: Update user information successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserInfo'
+              example:
+                _id: ''
+                fullname: 'Nguyen A'
+                avatarUrl: ''
+                phone: '0909090909'
+                nationCode: '+84'
+                address: 'Hanoi, Vietnam'
+                city: 'Hanoi'
+                country: 'Vietnam'
+                state: 'Ha Dong'
+        '404':
+          $ref: '#/components/responses/404NotFound'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+        '500':
+          $ref: '#/components/responses/500InternalServer'
 
   # CRUD APIs
-  /user:
+  /order:
     get:
-      summary: Get all users
+      summary: Get list orders
+      tags:
+        - Order
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/pageParam'
+        - $ref: '#/components/parameters/limitParam'
+        - in: query
+          name: orderCode
+          description: Search for card code.
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: quantity
+          description: Search for card code.
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: orderType
+          description: Search for card code.
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: customerId
+          description: Search for card code.
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: productId
+          description: Search for card code.
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: supplierId
+          description: Search for card code.
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: orderDate
+          description: Search for card code.
+          required: false
+          schema:
+            type: string
+
       responses:
         '200':
           description: A list of users
@@ -78,8 +324,13 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/User'
-
-  /user/{id}:
+        '404':
+          $ref: '#/components/responses/404NotFound'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+        '500':
+          $ref: '#/components/responses/500InternalServer'
+  /order/{id}:
     get:
       summary: Get a user by ID
       parameters:
@@ -131,12 +382,20 @@ paths:
           description: User deleted successfully
         '404':
           description: User not found
-
 components:
-  requestBody:
-  response:
-
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
   schemas:
+    ResponseMessage:
+      type: object
+      properties:
+        message:
+          type: string
+      required:
+        - message
     # User schema
     User:
       type: object
@@ -227,11 +486,64 @@ components:
           type: string
         state:
           type: string
-  securitySchemes:
-    bearerAuth:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
+    UserInfo:
+      properties:
+        _id:
+          type: string
+        fullname:
+          type: string
+        email:
+          type: string
+        avatarUrl:
+          type: string
+        phone:
+          type: string
+        nationCode:
+          type: string
+        address:
+          type: string
+        city:
+          type: string
+        country:
+          type: string
+        state:
+          type: string
+    #Order schema
+    Order:
+      type: object
+      properties:
+        _id:
+          type: string
+        orderCode:
+          type: string
+        customerId:
+          type: string
+        productId:
+          type: string
+        supplierId:
+          type: string
+        quantity:
+          type: number
+        totalAmount:
+          type: number
+        status:
+          type: string
+        orderType:
+          type: string
+        orderDate:
+          type: string
+    #Order location
+    OrderLocation:
+      type: object
+      properties:
+        _id:
+          type: string
+        staus:
+          type: string
+        location:
+          type: string
+        trackingTime:
+          type: string
   parameters:
     pageParam: # Can be referenced via '#/components/parameters/offsetParam'
       name: page
@@ -254,3 +566,75 @@ components:
         minimum: 1
         maximum: 100
         default: 10
+    startDateParam:
+      name: startDate
+      in: query
+      description: from this time
+      required: false
+      schema:
+        type: string
+    endDateParam:
+      name: endDate
+      in: query
+      description: to this time
+      required: false
+      schema:
+        type: string
+
+  responses:
+    200Successful:
+      description: The request is invalid from the client.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ResponseMessage'
+          example:
+            message: 'Successful !!!'
+    400BadRequest:
+      description: The request is invalid from the client.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ResponseMessage'
+          example:
+            message: '400 Bad request !!!'
+    404NotFound:
+      description: The specified resource was not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ResponseMessage'
+          example:
+            message: '404 Not found !!!'
+    401Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ResponseMessage'
+          example:
+            message: 'Unauthorized !!!'
+    403Forbidden:
+      description: User don’t have permission to access this resource
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ResponseMessage'
+          example:
+            message: 'Forbidden !!!'
+    500InternalServer:
+      description: An internal server error occurred.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ResponseMessage'
+          example:
+            message: '500 Internal server error !!!'
+    503ServiceUnavailable:
+      description: The server cannot handle the request temporarily.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ResponseMessage'
+          example:
+            message: '503 Service unavailable !!!'

@@ -35,6 +35,9 @@ app.use(function errorHandler(err: Error, req: Request, res: Response, next: Nex
 })
 app.use(compression())
 app.use('/v1/api', routes)
+const swaggerDocument = YAML.load('./swagger.yaml')
+app.use('v1/api/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
+app.use(helmet)
 
 const server = app.listen(port, () => {
   console.log(`Server running on port ${port}`)

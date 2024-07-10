@@ -1,4 +1,5 @@
 import express, { Router } from 'express'
+import accountRoute from './account.route'
 import authRoute from './auth.route'
 import customerRoute from './customer.route'
 import orderRoute from './order.route'
@@ -16,6 +17,7 @@ interface Route {
 }
 
 const defaultRoutes: Route[] = [
+  { path: '/account', route: accountRoute },
   { path: '/auth', route: authRoute },
   { path: '/customer', route: customerRoute },
   { path: '/order', route: orderRoute },

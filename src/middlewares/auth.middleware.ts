@@ -19,10 +19,12 @@ const authMiddleware = async (req: IRequest, res: Response, next: NextFunction):
   }
 
   const token = authHeader.split(' ')[1]
+  console.log('token', token)
 
   try {
     const decoded = (await authService.verifyAccessToken(token)) as JwtPayload
     req.user = { _id: decoded._id }
+    console.log(req.user._id)
     next()
   } catch (error) {
     return res.status(401).json({ message: 'Invalid or expired token' })

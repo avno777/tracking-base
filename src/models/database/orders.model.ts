@@ -7,7 +7,7 @@ interface IOrder extends Document {
   productId?: Schema.Types.ObjectId
   supplierId?: Schema.Types.ObjectId
   quantity?: number
-  totalAmount: number
+  totalAmount?: number
   status?: string
   orderType?: string
   orderDate: Date

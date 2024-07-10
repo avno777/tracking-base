@@ -1,6 +1,6 @@
 import mongoose, { Schema, Document } from 'mongoose'
 
-export interface ICustomer extends Document {
+export interface IDriver extends Document {
   _id?: string
   fullname: string
   email: string
@@ -45,5 +45,5 @@ const customerSchema: Schema = new Schema(
   { versionKey: false, timestamps: true }
 )
 
-const CustomerModel = mongoose.model<ICustomer>('CustomerModel', customerSchema)
-export default CustomerModel
+const DriverModel = mongoose.model<IDriver>('DriverModel', customerSchema)
+export default DriverModel

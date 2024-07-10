@@ -6,7 +6,7 @@ const SupplierController = {
   createData: async function (req: IRequest, res: Response): Promise<void> {
     try {
       const createdData = await supplierService.createData(req)
-      res.status(201).json({ message: 'Create new elevator data successfully', createdData })
+      res.status(201).json({ message: 'Create new  data successfully', createdData })
     } catch (error: any) {
       res.status(500).json({ error: error.message })
     }
@@ -14,7 +14,7 @@ const SupplierController = {
   getData: async function (req: IRequest, res: Response): Promise<void> {
     try {
       const _data = await supplierService.getData(req)
-      res.status(200).json({ message: 'Get elevator data successfully', _data })
+      res.status(200).json({ message: 'Get data successfully', _data })
     } catch (error: any) {
       res.status(500).json({ error: error.message })
     }
@@ -23,9 +23,9 @@ const SupplierController = {
     try {
       const data = await supplierService.getDataById(req)
       if (!data) {
-        res.status(404).json({ message: 'Card not found' })
+        res.status(404).json({ message: 'Data not found' })
       }
-      res.status(200).json({ message: 'Get elevator data by id successfully', data })
+      res.status(200).json({ message: 'Get data successfully', data })
     } catch (error: any) {
       res.status(500).json({ error: error.message })
     }
@@ -34,9 +34,9 @@ const SupplierController = {
     try {
       const updatedData = await supplierService.updateDataById(req)
       if (!updatedData) {
-        res.status(404).json({ message: 'Card not found' })
+        res.status(404).json({ message: 'Data not found' })
       }
-      res.status(200).json({ message: 'Update elevator data successfully', updatedData })
+      res.status(200).json({ message: 'Update data successfully', updatedData })
     } catch (error: any) {
       res.status(500).json({ error: error.message })
     }
@@ -45,9 +45,9 @@ const SupplierController = {
     try {
       const deletedData = await supplierService.deleteDataById(req)
       if (!deletedData) {
-        res.status(404).json({ message: 'Citizen data not found' })
+        res.status(404).json({ message: 'Data not found' })
       }
-      res.status(200).json({ message: 'Delete citizen data successfully' })
+      res.status(200).json({ message: 'Delete data successfully' })
     } catch (error: any) {
       res.status(500).json({ error: error.message })
     }

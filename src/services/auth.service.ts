@@ -3,6 +3,7 @@ import * as jwt from 'jsonwebtoken'
 import fs from 'fs'
 import crypto from 'crypto'
 import dotenv from 'dotenv'
+import _ from 'lodash'
 import accountModel from '../models/database/accounts.models'
 import { IAccount } from '../models/database/accounts.models'
 import { redis as redisClient } from '../configs/redis'
@@ -121,7 +122,17 @@ const AuthService = {
     const hashPassword = await AuthService.hashedPassword(password)
     await accountModel.updateOne({ email }, { password: hashPassword })
   },
+  updateOneUser: async (criteria: any, update: any) => {
+    const allowedFields = ['email', 'phone', '_id', 'username', 'address', 'city', 'country', 'state']
 
+    const invalidFields = _.difference(_.keys(criteria), allowedFields)
+    if (!_.isEmpty(invalidFields)) {
+      throw new Error(`Invalid fields: ${invalidFields.join(', ')}`)
+    }
+
+    const user = await accountModel.updateOne(criteria, update)
+    return user
+  },
   verifyAccessToken: async (accessToken: string) => {
     try {
       return jwt.verify(accessToken, publicKey0, { algorithms: ['RS256'] })
