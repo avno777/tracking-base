@@ -4,7 +4,7 @@ info:
   version: 1.0.0
   description: API for user authentication and management
 servers:
-  - url: http://localhost:6061
+  - url: http://localhost:6061/v1/api
 # schemes:
 # - https
 # - http
@@ -332,7 +332,11 @@ paths:
           $ref: '#/components/responses/500InternalServer'
   /order/{id}:
     get:
-      summary: Get a user by ID
+      summary: Get order by ID
+      tags:
+        - Order
+      security:
+        - bearerAuth: []
       parameters:
         - in: path
           name: id
@@ -349,7 +353,11 @@ paths:
         '404':
           description: User not found
     put:
-      summary: Update a user by ID
+      summary: Update order by ID
+      tags:
+        - Order
+      security:
+        - bearerAuth: []
       parameters:
         - in: path
           name: id
@@ -370,7 +378,11 @@ paths:
         '404':
           description: User not found
     delete:
-      summary: Delete a user by ID
+      summary: Delete order by ID
+      tags:
+        - Order
+      security:
+        - bearerAuth: []
       parameters:
         - in: path
           name: id
