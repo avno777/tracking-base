@@ -274,56 +274,118 @@ paths:
         - $ref: '#/components/parameters/limitParam'
         - in: query
           name: orderCode
-          description: Search for card code.
+          description: Search for order code.
           required: false
           schema:
             type: string
         - in: query
           name: quantity
-          description: Search for card code.
+          description: Search for quantity.
           required: false
           schema:
             type: string
         - in: query
           name: orderType
-          description: Search for card code.
+          description: Search for order type.
           required: false
           schema:
             type: string
         - in: query
           name: customerId
-          description: Search for card code.
+          description: Search for customer.
           required: false
           schema:
             type: string
         - in: query
           name: productId
-          description: Search for card code.
+          description: Search for product.
           required: false
           schema:
             type: string
         - in: query
           name: supplierId
-          description: Search for card code.
+          description: Search for supplier.
           required: false
           schema:
             type: string
         - in: query
           name: orderDate
-          description: Search for card code.
+          description: Search for order date.
           required: false
           schema:
             type: string
-
       responses:
         '200':
-          description: A list of users
+          description: A list of orders
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/User'
+                  $ref: '#/components/schemas/Order'
+                example:
+                  message: Get data successfully
+                  data:
+                    _id: 'objectId'
+                    orderCode: '01'
+                    customerId: 'customerID'
+                    productId: 'productId'
+                    supplierId: 'supplierID'
+                    quantity: 10
+                    totalAmount: 20000
+                    status: 'Ordered'
+                    orderType: 'home delivery'
+                    orderDate: '1720927126'
+
+        '404':
+          $ref: '#/components/responses/404NotFound'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+        '500':
+          $ref: '#/components/responses/500InternalServer'
+    post:
+      summary: create an order
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Order'
+            example:
+              message: Get data successfully
+              data:
+                _id: 'objectId'
+                orderCode: '01'
+                customerId: 'customerID'
+                productId: 'productId'
+                supplierId: 'supplierID'
+                quantity: 10
+                totalAmount: 20000
+                status: 'Ordered'
+                orderType: 'home delivery'
+                orderDate: '1720927126'
+      responses:
+        '200':
+          description: Create order successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+              example:
+                message: Get data successfully
+                data:
+                  _id: 'objectId'
+                  orderCode: '01'
+                  customerId: 'customerID'
+                  productId: 'productId'
+                  supplierId: 'supplierID'
+                  quantity: 10
+                  totalAmount: 20000
+                  status: 'Ordered'
+                  orderType: 'home delivery'
+                  orderDate: '1720927126'
         '404':
           $ref: '#/components/responses/404NotFound'
         '401':
@@ -345,13 +407,17 @@ paths:
             type: string
       responses:
         '200':
-          description: User details
+          description: Order details
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/Order'
         '404':
-          description: User not found
+          $ref: '#/components/responses/404NotFound'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+        '500':
+          $ref: '#/components/responses/500InternalServer'
     put:
       summary: Update order by ID
       tags:
@@ -369,14 +435,51 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UpdateUser'
+              $ref: '#/components/schemas/Order'
+            example:
+              message: Get data successfully
+              data:
+                _id: 'objectId'
+                orderCode: '01'
+                customerId: 'customerID'
+                productId: 'productId'
+                supplierId: 'supplierID'
+                quantity: 10
+                totalAmount: 20000
+                status: 'Ordered'
+                orderType: 'home delivery'
+                orderDate: '1720927126'
       responses:
         '200':
-          description: User updated successfully
-        '400':
-          description: Bad request
+          description: Get data successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  data:
+                    $ref: '#/components/schemas/Order'
+              example:
+                message: Get data successfully
+                data:
+                  _id: 'objectId'
+                  orderCode: '01'
+                  customerId: 'customerID'
+                  productId: 'productId'
+                  supplierId: 'supplierID'
+                  quantity: 10
+                  totalAmount: 20000
+                  status: 'Ordered'
+                  orderType: 'home delivery'
+                  orderDate: '1720927126'
         '404':
-          description: User not found
+          $ref: '#/components/responses/404NotFound'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+        '500':
+          $ref: '#/components/responses/500InternalServer'
     delete:
       summary: Delete order by ID
       tags:
@@ -390,10 +493,14 @@ paths:
           schema:
             type: string
       responses:
-        '200':
-          description: User deleted successfully
+        '204':
+          $ref: '#/components/responses/204DeleteSuccessfully'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
         '404':
-          description: User not found
+          $ref: '#/components/responses/404NotFound'
+        '500':
+          $ref: '#/components/responses/500InternalServer'
 components:
   securitySchemes:
     bearerAuth:
@@ -595,13 +702,21 @@ components:
 
   responses:
     200Successful:
-      description: The request is invalid from the client.
+      description: The request successful.
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/ResponseMessage'
           example:
             message: 'Successful !!!'
+    204DeleteSuccessfully:
+      description: Delete data successfully.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ResponseMessage'
+          example:
+            message: 'Delete Successfully !!!'
     400BadRequest:
       description: The request is invalid from the client.
       content:
