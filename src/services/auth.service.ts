@@ -8,6 +8,9 @@ import accountModel from '../models/database/accounts.models'
 import { IAccount } from '../models/database/accounts.models'
 import { redis as redisClient } from '../configs/redis'
 import { config } from '../configs/config'
+import { sendEmail } from './email.service'
+import { getRandomOTP } from '~/helpers/getOtp'
+import { emailTemplate } from '~/utils/emailTemplate'
 
 dotenv.config()
 interface UserBody {
@@ -55,6 +58,16 @@ const AuthService = {
     console.log('user', user)
     return user
   },
+  findByCriteria: async (criteria: Record<string, any>, fields: string): Promise<any> => {
+    const allowedFields = ['email', 'phone', '_id', 'username']
+
+    const invalidFields = _.difference(_.keys(criteria), allowedFields)
+    if (!_.isEmpty(invalidFields)) {
+      throw new Error(`Invalid fields: ${invalidFields.join(', ')}`)
+    }
+    const user = await accountModel.findOne(criteria).lean().select(fields)
+    return user
+  },
 
   createUser: async (userBody: UserBody): Promise<IAccount> => {
     const newUser: UserBody = {
@@ -64,6 +77,7 @@ const AuthService = {
     }
 
     const user: IAccount = await accountModel.create(newUser)
+    await AuthService.otpVerifyAccount(user)
     return user
   },
 
@@ -139,6 +153,29 @@ const AuthService = {
     } catch (error) {
       return jwt.verify(accessToken, publicKey1, { algorithms: ['RS256'] })
     }
+  },
+  otpVerifyAccount: async (user: { email: string; fullname: string }): Promise<void> => {
+    const otp: number = getRandomOTP()
+    const otpTime = new Date()
+    otpTime.setMinutes(otpTime.getMinutes() + config.otp.exTime)
+
+    await accountModel.updateOne({ email: user.email }, { otp, otpTime })
+
+    await sendEmail(
+      user.email,
+      `${otp} là mã kích hoạt tài khoản của bạn`,
+      emailTemplate.getOtpHtml(otp, user.fullname)
+    )
+  },
+
+  otpForGot: async (email: string): Promise<void> => {
+    const otp: number = getRandomOTP()
+    const otpTime = new Date()
+    otpTime.setMinutes(otpTime.getMinutes() + config.otp.exTime)
+
+    await accountModel.updateOne({ email }, { otp, otpTime })
+    const { fullname } = await AuthService.findByCriteria({ email }, 'fullname')
+    await sendEmail(email, `${otp} là mã OTP khôi phục mật khẩu của bạn`, emailTemplate.getOtpHtml(otp, fullname))
   }
 }
 

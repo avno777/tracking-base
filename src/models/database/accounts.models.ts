@@ -6,7 +6,7 @@ export interface IAccount extends Document {
   email: string
   password: string
   avatarUrl?: string
-  role: 'Retailers' | 'Logistic ' | 'Manufacturing'
+  role: 'Retailers' | 'Logistic ' | 'Manufacturing' | 'Admin'
   refreshToken?: [string]
   phone?: string
   nationCode?: string
@@ -14,6 +14,11 @@ export interface IAccount extends Document {
   city?: string
   country?: string
   state?: string
+  isAdmin?: boolean
+  isActive?: boolean
+  isDeleted?: boolean
+  otp?: number
+  otpTime?: Date
 }
 
 const accountSchema: Schema = new Schema(
@@ -38,7 +43,7 @@ const accountSchema: Schema = new Schema(
     },
     role: {
       type: String,
-      enum: ['Retailers', 'Logistic', 'Manufacturing'],
+      enum: ['Retailers', 'Logistic', 'Manufacturing', 'Admin'],
       default: 'Retailers'
     },
     phone: {
@@ -62,7 +67,12 @@ const accountSchema: Schema = new Schema(
     refreshToken: {
       type: [String],
       select: false
-    }
+    },
+    isAdmin: { type: Boolean, default: false },
+    isActive: { type: Boolean, default: false },
+    isDeleted: { type: Boolean, default: false },
+    otp: { type: String, length: 6, select: false },
+    otpTime: Date
   },
   { versionKey: false, timestamps: true }
 )

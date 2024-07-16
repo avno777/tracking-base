@@ -19,10 +19,11 @@ interface EnvVars {
   LOG_FORMAT: string
   LOG_DIR: string
   SMTP_HOST: string
-  SMTP_PORT: string
+  SMTP_PORT: number
   SMTP_USERNAME: string
   SMTP_PASSWORD: string
   EMAIL_FROM: string
+  OTP_EXPIRE_MINUTE: number
 }
 
 const envVarsSchema = Joi.object<EnvVars>()
@@ -44,7 +45,8 @@ const envVarsSchema = Joi.object<EnvVars>()
     SMTP_PORT: Joi.number().description('port to connect to the email server'),
     SMTP_USERNAME: Joi.string().description('username for email server'),
     SMTP_PASSWORD: Joi.string().description('password for email server'),
-    EMAIL_FROM: Joi.string().description('the from field in the emails sent by the app')
+    EMAIL_FROM: Joi.string().description('the from field in the emails sent by the app'),
+    OTP_EXPIRE_MINUTE: Joi.number().description('Otp Time')
   })
   .unknown()
 
@@ -82,5 +84,8 @@ export const config = {
     username: envVars.SMTP_USERNAME,
     password: envVars.SMTP_PASSWORD,
     email: envVars.EMAIL_FROM
+  },
+  otp: {
+    exTime: envVars.OTP_EXPIRE_MINUTE
   }
 }
