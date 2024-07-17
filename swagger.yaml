@@ -184,6 +184,45 @@ paths:
           $ref: '#/components/responses/401Unauthorized'
         '500':
           $ref: '#/components/responses/500InternalServer'
+  /auth/refresh-token:
+    post:
+      summary: Refresh token
+      tags:
+        - 'Authentication'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                refreshToken:
+                  type: string
+              required:
+                - refreshToken
+            example:
+              refreshToken: 'refresh token'
+      responses:
+        '200':
+          description: Token refreshed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  accessToken:
+                    type: string
+              example:
+                message: 'Refresh token successfully'
+                accessToken: 'new access token'
+        '404':
+          $ref: '#/components/responses/404NotFound'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+        '500':
+          $ref: '#/components/responses/500InternalServer'
 
   /account/user-info:
     get:
@@ -345,6 +384,8 @@ paths:
           $ref: '#/components/responses/500InternalServer'
     post:
       summary: create an order
+      tags:
+        - Order
       security:
         - bearerAuth: []
       requestBody:
@@ -356,14 +397,13 @@ paths:
             example:
               message: Get data successfully
               data:
-                _id: 'objectId'
                 orderCode: '01'
                 customerId: 'customerID'
                 productId: 'productId'
                 supplierId: 'supplierID'
                 quantity: 10
                 totalAmount: 20000
-                status: 'Ordered'
+                status: 1
                 orderType: 'home delivery'
                 orderDate: '1720927126'
       responses:
@@ -663,6 +703,26 @@ components:
           type: string
         trackingTime:
           type: string
+    customer:
+      type: object
+      properties:
+        _id: 
+          type: string
+        fullname: 
+          type: string
+        email: 
+          type: string
+        password: 
+          type: string
+        phone: 
+          type: string
+        address: 
+          type: string
+        company: 
+          type: string
+        status: 
+          type: string
+
   parameters:
     pageParam: # Can be referenced via '#/components/parameters/offsetParam'
       name: page
