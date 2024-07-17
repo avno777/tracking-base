@@ -4,12 +4,12 @@ interface IOrder extends Document {
   _id?: string
   orderCode?: string
   customerId?: Schema.Types.ObjectId
-  productId?: Schema.Types.ObjectId
+  product?: string
   supplierId?: Schema.Types.ObjectId
   quantity?: number
   totalAmount?: number
-  status?: string
-  orderType?: string
+  status?: number
+  orderType?: number
   orderDate: Date
   location?: {
     type: string
@@ -21,12 +21,12 @@ interface IOrder extends Document {
 const orderSchema = new Schema<IOrder>({
   orderCode: { type: String, required: true },
   customerId: { type: Schema.Types.ObjectId, ref: 'Customer', required: true },
-  productId: { type: Schema.Types.ObjectId, ref: 'Product', required: true },
+  product: { type: String, required: true },
   supplierId: { type: Schema.Types.ObjectId, ref: 'Supplier', required: true },
   quantity: { type: Number, required: true },
   totalAmount: { type: Number, required: true },
-  status: { type: String, enum: ['ordered', 'processing', 'delivering', 'delivered'], default: 'ordered' },
-  orderType: { type: String, enum: ['home delivery', 'pick up'], default: 'home delivery' },
+  status: { type: Number, enum: [1, 2, 3, 4], default: 1 }, //1: ordered. 2:'processing', 3: 'delivering', 4: 'delivered'
+  orderType: { type: Number, enum: [11, 12], default: 'home delivery' }, //11: home delivery, 12: pick up
   orderDate: { type: Date, default: Date.now },
   location: {
     type: { type: String, enum: ['Point'], required: true },
