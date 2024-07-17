@@ -6,9 +6,6 @@ dist/
 # Keys
 privateKey.pem
 
-<<<<<<< HEAD
 # Logs
-=======
->>>>>>> 1f3baf55d0b3fe17ab6d388a1cdf7c6eec11e37f
 combined.log
 error.log
