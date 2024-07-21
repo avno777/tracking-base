@@ -126,7 +126,64 @@ paths:
                 message: 'Invalid password'
         '500':
           $ref: '#/components/responses/500InternalServer'
-
+  /auth/active:
+    post:
+      summary: active account
+      tags:
+        - 'Authentication'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                otp:
+                  type: string
+                email:
+                  type: string
+      responses:
+        '200':
+          description: Active account successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      accessToken:
+                        type: string
+                      refreshToken:
+                        type: string
+                      user:
+                        type: object
+                        properties:
+                          _id:
+                            type: string
+                          fullname:
+                            type: string
+                          avatarUrl:
+                            type: string
+                          phone:
+                            type: string
+                          nationCode:
+                            type: string
+                          address:
+                            type: string
+                          city:
+                            type: string
+                          country:
+                            type: string
+                          state:
+                            type: string
+        '400':
+          $ref: '#/components/responses/400BadRequest'
+        '500':
+          $ref: '#/components/responses/500InternalServer'
   /auth/change-password:
     post:
       summary: Change user password
@@ -166,6 +223,8 @@ paths:
       summary: Logout a user
       tags:
         - 'Authentication'
+      security:
+        - bearerAuth: []
       responses:
         '200':
           description: User logged out successfully
@@ -189,6 +248,8 @@ paths:
       summary: Refresh token
       tags:
         - 'Authentication'
+      security:
+        - bearerAuth: []
       requestBody:
         required: true
         content:
@@ -223,6 +284,83 @@ paths:
           $ref: '#/components/responses/401Unauthorized'
         '500':
           $ref: '#/components/responses/500InternalServer'
+  /auth/send-otp-forgot:
+    post:
+      summary: Send OTP token forgot
+      tags:
+        - 'Authentication'
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+              required:
+                - email
+            example:
+              email: 'a@gmail.com'
+      responses:
+        '200':
+          description: Send OTP successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      otp:
+                        type: string
+                      email:
+                        type: string
+              example:
+                message: 'Send OTP successfully'
+                data:
+                  otp: '123456'
+                  email: 'a@gmail.com'
+  /auth/verify-otp-forGot:
+    post:
+      summary: Verify OTP forgot
+      tags:
+        - 'Authentication'
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                otp:
+                  type: number
+              required:
+                - email
+                - otp
+            example:
+              email: 'a@gmail.com'
+              otp: 123456
+      responses:
+        '200':
+          description: Send OTP successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseMessage'
+              example:
+                message: 'Send OTP successfully'
+        '400':
+          $ref: '#/components/responses/400BadRequest'
 
   /account/user-info:
     get:
@@ -395,17 +533,15 @@ paths:
             schema:
               $ref: '#/components/schemas/Order'
             example:
-              message: Get data successfully
-              data:
-                orderCode: '01'
-                customerId: 'customerID'
-                productId: 'productId'
-                supplierId: 'supplierID'
-                quantity: 10
-                totalAmount: 20000
-                status: 1
-                orderType: 'home delivery'
-                orderDate: '1720927126'
+              orderCode: '01'
+              customerId: 'customerID'
+              productId: 'productId'
+              supplierId: 'supplierID'
+              quantity: 10
+              totalAmount: 20000
+              status: 1
+              orderType: 'home delivery'
+              orderDate: '1720927126'
       responses:
         '200':
           description: Create order successfully
@@ -541,6 +677,246 @@ paths:
           $ref: '#/components/responses/404NotFound'
         '500':
           $ref: '#/components/responses/500InternalServer'
+  #Customer
+  /customer:
+    get:
+      summary: Get list customers
+      tags:
+        - Customer
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/pageParam'
+        - $ref: '#/components/parameters/limitParam'
+        - in: query
+          name: orderCode
+          description: Search for order code.
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: quantity
+          description: Search for quantity.
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: orderType
+          description: Search for order type.
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: customerId
+          description: Search for customer.
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: productId
+          description: Search for product.
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: supplierId
+          description: Search for supplier.
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: orderDate
+          description: Search for order date.
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A list of customers
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Order'
+                example:
+                  message: Get data successfully
+                  data:
+                    _id: 'objectId'
+                    orderCode: '01'
+                    customerId: 'customerID'
+                    productId: 'productId'
+                    supplierId: 'supplierID'
+                    quantity: 10
+                    totalAmount: 20000
+                    status: 'Ordered'
+                    orderType: 'home delivery'
+                    orderDate: '1720927126'
+
+        '404':
+          $ref: '#/components/responses/404NotFound'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+        '500':
+          $ref: '#/components/responses/500InternalServer'
+    post:
+      summary: create an customer
+      tags:
+        - Customer
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Order'
+            example:
+              orderCode: '01'
+              customerId: 'customerID'
+              productId: 'productId'
+              supplierId: 'supplierID'
+              quantity: 10
+              totalAmount: 20000
+              status: 1
+              orderType: 'home delivery'
+              orderDate: '1720927126'
+      responses:
+        '200':
+          description: Create order successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+              example:
+                message: Get data successfully
+                data:
+                  _id: 'objectId'
+                  orderCode: '01'
+                  customerId: 'customerID'
+                  productId: 'productId'
+                  supplierId: 'supplierID'
+                  quantity: 10
+                  totalAmount: 20000
+                  status: 'Ordered'
+                  orderType: 'home delivery'
+                  orderDate: '1720927126'
+        '404':
+          $ref: '#/components/responses/404NotFound'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+        '500':
+          $ref: '#/components/responses/500InternalServer'
+  /customer/{id}:
+    get:
+      summary: Get customer by ID
+      tags:
+        - Customer
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Order details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        '404':
+          $ref: '#/components/responses/404NotFound'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+        '500':
+          $ref: '#/components/responses/500InternalServer'
+    put:
+      summary: Update customer by ID
+      tags:
+        - Customer
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Order'
+            example:
+              message: Get data successfully
+              data:
+                _id: 'objectId'
+                orderCode: '01'
+                customerId: 'customerID'
+                productId: 'productId'
+                supplierId: 'supplierID'
+                quantity: 10
+                totalAmount: 20000
+                status: 'Ordered'
+                orderType: 'home delivery'
+                orderDate: '1720927126'
+      responses:
+        '200':
+          description: Get data successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  data:
+                    $ref: '#/components/schemas/Order'
+              example:
+                message: Get data successfully
+                data:
+                  _id: 'objectId'
+                  orderCode: '01'
+                  customerId: 'customerID'
+                  productId: 'productId'
+                  supplierId: 'supplierID'
+                  quantity: 10
+                  totalAmount: 20000
+                  status: 'Ordered'
+                  orderType: 'home delivery'
+                  orderDate: '1720927126'
+        '404':
+          $ref: '#/components/responses/404NotFound'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+        '500':
+          $ref: '#/components/responses/500InternalServer'
+    delete:
+      summary: Delete customer by ID
+      tags:
+        - Customer
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          $ref: '#/components/responses/204DeleteSuccessfully'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+        '404':
+          $ref: '#/components/responses/404NotFound'
+        '500':
+          $ref: '#/components/responses/500InternalServer'
+
 components:
   securitySchemes:
     bearerAuth:
@@ -616,7 +992,25 @@ components:
           type: string
         newPassword:
           type: string
-
+    accountData:
+      type: object
+      properties:
+        _id:
+          type: string
+        fullname:
+          type: string
+        phone:
+          type: string
+        nationCode:
+          type: string
+        address:
+          type: string
+        city:
+          type: string
+        country:
+          type: string
+        state:
+          type: string
     # UpdateUser schema
     UpdateUser:
       type: object
@@ -706,21 +1100,21 @@ components:
     customer:
       type: object
       properties:
-        _id: 
+        _id:
           type: string
-        fullname: 
+        fullname:
           type: string
-        email: 
+        email:
           type: string
-        password: 
+        password:
           type: string
-        phone: 
+        phone:
           type: string
-        address: 
+        address:
           type: string
-        company: 
+        company:
           type: string
-        status: 
+        status:
           type: string
 
   parameters:

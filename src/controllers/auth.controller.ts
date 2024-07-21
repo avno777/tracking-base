@@ -24,13 +24,10 @@ const AuthController = {
     }
   },
   active: async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
-    const { otp, email }: { otp: string; email: string } = req.body
+    const { otp, email } = req.body
     // const { error } = await activeSchema.validate({ otp, email });
     // if (error) return response400(res, jsonRes.INVALID_INFORMATION);
-    const user = await authService.findByCriteria(
-      { email },
-      '+otp otpTime isDeleted isActive fullName email phone username avatarUrl avatarColor coverImage nameColor'
-    )
+    const user = await authService.findByCriteria({ email }, '+otp otpTime isActive fullName email phone')
     if (!user) {
       return res.status(404).json({ message: 'Account is not registed !!!' })
     }
@@ -38,7 +35,7 @@ const AuthController = {
     //   res.status(400).json({ message: 'Account is not registed !!!' })
     //   //return response400(res, jsonRes.ACCOUNT_WAS_DELETED);
     // }
-    if (user.isActive) {
+    if (!user.isActive) {
       return res.status(400).json({ message: 'Account is not active !!!' })
       //return response400(res, jsonRes.ACCOUNT_WAS_ACTIVED);
     }
@@ -53,13 +50,11 @@ const AuthController = {
     const { accessToken, refreshToken } = await authService.generateTokens(user._id)
     const { _id, fullname, avatarUrl, phone, nationCode, address, city, country, state } = user
     await AccountModel.updateOne({ email }, { isActive: true, $push: { refreshTokens: refreshToken } })
-    res.status(200).json({
+    return res.status(200).json({
       message: 'Active successfully !!!',
-      data: {
-        accessToken,
-        refreshToken,
-        user: { _id, fullname, avatarUrl, phone, nationCode, address, city, country, state }
-      }
+      accessToken,
+      refreshToken,
+      user: { _id, fullname, avatarUrl, phone, nationCode, address, city, country, state }
     })
     // return response201(res, jsonRes.ACTIVE_SUCCESSFULLY, {
     //   accessToken,
@@ -75,6 +70,10 @@ const AuthController = {
       console.log('user', user)
       if (!user) {
         return res.status(404).json({ message: 'Email not found' })
+      }
+      //if (user.isDeleted) return response400(res, jsonRes.ACCOUNT_WAS_DELETED);
+      if (!user.isActive) {
+        return res.status(400).json({ message: 'Account is not active !!!' })
       }
       if (!(await authService.isPasswordMatch(user, password))) {
         return res.status(402).json({ message: 'Invalid password' })
@@ -162,10 +161,10 @@ const AuthController = {
     //   res.status(400).json({ message: 'Account is not registed !!!' })
     //   //return response400(res, jsonRes.ACCOUNT_WAS_DELETED);
     // }
-    if (user.isActive) {
-      return res.status(400).json({ message: 'Account is not active !!!' })
-      //return response400(res, jsonRes.ACCOUNT_WAS_ACTIVED);
-    }
+    // if (!user.isActive) {
+    //   return res.status(400).json({ message: 'Account is not active !!!' })
+    //   return response400(res, jsonRes.ACCOUNT_WAS_ACTIVED);
+    // }
     if (user.otp !== otp) {
       return res.status(400).json({ message: 'Otp is incorrect !!!' })
       //return response400(res, jsonRes.OTP_IS_INCORRECT);
