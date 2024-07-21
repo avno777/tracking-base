@@ -14,7 +14,7 @@ import { config } from '../configs/config'
 // }
 
 const transport: Transporter = nodemailer.createTransport({
-  host: '173.194.174.108', //config.mail.host,
+  host: config.mail.host,
   port: config.mail.port,
   secure: true,
   //requireTLS: true,
