@@ -35,8 +35,8 @@ const AuthController = {
     //   res.status(400).json({ message: 'Account is not registed !!!' })
     //   //return response400(res, jsonRes.ACCOUNT_WAS_DELETED);
     // }
-    if (!user.isActive) {
-      return res.status(400).json({ message: 'Account is not active !!!' })
+    if (user.isActive) {
+      return res.status(400).json({ message: 'Account was actived !!!' })
       //return response400(res, jsonRes.ACCOUNT_WAS_ACTIVED);
     }
     if (user.otp !== otp) {
