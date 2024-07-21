@@ -22,7 +22,7 @@ app.use(express.urlencoded({ limit: '100mb', extended: true }))
 app.use((req: Request, res: Response, next: NextFunction) => {
   res.setHeader('Access-Control-Allow-Origin', '*') // Enable CORS
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization')
-  res.setHeader('Access-Control-Expose-Headers', 'Content-Disposition')
+  //res.setHeader('Access-Control-Expose-Headers', 'Content-Disposition')
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS')
   next()
 })
