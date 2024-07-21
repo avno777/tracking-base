@@ -14,13 +14,16 @@ import { config } from '../configs/config'
 // }
 
 const transport: Transporter = nodemailer.createTransport({
-  host: config.mail.host,
+  host: '173.194.174.108', //config.mail.host,
   port: config.mail.port,
-  secure: false,
-  requireTLS: true,
+  secure: true,
+  //requireTLS: true,
   auth: {
     user: config.mail.username,
     pass: config.mail.password
+  },
+  tls: {
+    rejectUnauthorized: false // Không từ chối các chứng chỉ không hợp lệ
   },
   logger: true
 })
