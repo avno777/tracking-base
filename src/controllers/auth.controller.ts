@@ -27,7 +27,7 @@ const AuthController = {
     const { otp, email } = req.body
     // const { error } = await activeSchema.validate({ otp, email });
     // if (error) return response400(res, jsonRes.INVALID_INFORMATION);
-    const user = await authService.findByCriteria({ email }, '+otp otpTime isActive fullName email phone')
+    const user = await authService.findByCriteria({ email }, '+otp otpTime isActive fullname email phone')
     if (!user) {
       return res.status(404).json({ message: 'Account is not registed !!!' })
     }
@@ -54,7 +54,7 @@ const AuthController = {
       message: 'Active successfully !!!',
       accessToken,
       refreshToken,
-      user: { _id, fullname, avatarUrl, phone, nationCode, address, city, country, state }
+      user: { _id, fullname, email, avatarUrl, phone, nationCode, address, city, country, state }
     })
     // return response201(res, jsonRes.ACTIVE_SUCCESSFULLY, {
     //   accessToken,
@@ -90,7 +90,7 @@ const AuthController = {
         message: 'Login successful !!!',
         accessToken: accessToken,
         refreshToken: refreshToken,
-        user: { _id, fullname, avatarUrl, phone, nationCode, address, city, country, state }
+        user: { _id, fullname, email, avatarUrl, phone, nationCode, address, city, country, state }
       })
     } catch (error: any) {
       console.log('error', error)
