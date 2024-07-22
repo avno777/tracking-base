@@ -116,19 +116,40 @@ const AuthService = {
     await accountModel.updateMany({ email }, { $unset: { refreshToken: 1 } })
   },
 
+  // refreshToken: async (refreshToken: string) => {
+  //   let decoded: any
+
+  //   try {
+  //     decoded = jwt.verify(refreshToken, publicKey0, { algorithms: ['RS256'] })
+  //   } catch (error) {
+  //     decoded = jwt.verify(refreshToken, publicKey1, { algorithms: ['RS256'] })
+  //   }
+
+  //   const accessToken = jwt.sign({ _id: decoded._id }, privateKey, {
+  //     expiresIn: config.jwt.accessExpirationMinutes,
+  //     algorithm: 'RS256'
+  //   })
+  //   return accessToken
+  // },
+
   refreshToken: async (refreshToken: string) => {
     let decoded: any
 
     try {
       decoded = jwt.verify(refreshToken, publicKey0, { algorithms: ['RS256'] })
     } catch (error) {
-      decoded = jwt.verify(refreshToken, publicKey1, { algorithms: ['RS256'] })
+      try {
+        decoded = jwt.verify(refreshToken, publicKey1, { algorithms: ['RS256'] })
+      } catch (error) {
+        throw new Error('Invalid refresh token')
+      }
     }
 
     const accessToken = jwt.sign({ _id: decoded._id }, privateKey, {
       expiresIn: config.jwt.accessExpirationMinutes,
       algorithm: 'RS256'
     })
+
     return accessToken
   },
 
