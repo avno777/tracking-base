@@ -32,14 +32,14 @@ const AuthController = {
     // if (error) return response400(res, jsonRes.INVALID_INFORMATION);
     const user = await authService.findByCriteria({ email }, '+otp otpTime isActive fullname email phone')
     if (!user) {
-      return res.status(404).json({ message: 'Account is not registed !!!' })
+      return res.status(404).json({ message: 'Account is not registered !!!' })
     }
     // if (user.isDeleted) {
     //   res.status(400).json({ message: 'Account is not registed !!!' })
     //   //return response400(res, jsonRes.ACCOUNT_WAS_DELETED);
     // }
     if (user.isActive) {
-      return res.status(400).json({ message: 'Account was actived !!!' })
+      return res.status(400).json({ message: 'Account was activated !!!' })
       //return response400(res, jsonRes.ACCOUNT_WAS_ACTIVED);
     }
     if (user.otp !== otp) {
@@ -54,7 +54,7 @@ const AuthController = {
     const { _id, fullname, avatarUrl, phone, nationCode, address, city, country, state } = user
     await AccountModel.updateOne({ email }, { isActive: true, $push: { refreshTokens: refreshToken } })
     return res.status(200).json({
-      message: 'Active successfully !!!',
+      message: 'Activate successfully !!!',
       accessToken,
       refreshToken,
       user: { _id, fullname, email, avatarUrl, phone, nationCode, address, city, country, state }
@@ -76,7 +76,7 @@ const AuthController = {
       }
       //if (user.isDeleted) return response400(res, jsonRes.ACCOUNT_WAS_DELETED);
       if (!user.isActive) {
-        return res.status(400).json({ message: 'Account is not active !!!' })
+        return res.status(400).json({ message: 'Account is not activated !!!' })
       }
       if (!(await authService.isPasswordMatch(user, password))) {
         return res.status(402).json({ message: 'Invalid password' })
@@ -163,7 +163,7 @@ const AuthController = {
     // if (error) return response400(res, jsonRes.INVALID_INFORMATION)
     const user = await authService.findByCriteria({ email }, '+otp otpTime isDeleted isActive')
     if (!user) {
-      return res.status(404).json({ message: 'Account is not registed !!!' })
+      return res.status(404).json({ message: 'Account is not registered !!!' })
     }
     // if (user.isDeleted) {
     //   res.status(400).json({ message: 'Account is not registed !!!' })
