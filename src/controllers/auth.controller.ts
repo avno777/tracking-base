@@ -8,10 +8,13 @@ const AuthController = {
     try {
       const { fullname, email, password } = req.body
       const user = await authService.findByKeyword({ email }, 'email')
-      if (user) {
-        return res.status(404).json({ message: 'Email existed !!!' })
-      }
       const hashedPassword = await authService.hashedPassword(password)
+      if (user && user.isActive === true) {
+        return res.status(404).json({ message: 'Email is already existed and actived !!!' })
+      } else if (user && user.isActive === false) {
+        await authService.changePassword(email, hashedPassword)
+        return res.status(201).json({ message: 'Email is already existed and not actived !!!', email: { email } })
+      }
       const newUser = await authService.createUser({
         fullname,
         email,
