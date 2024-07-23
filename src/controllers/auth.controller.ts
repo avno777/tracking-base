@@ -10,11 +10,11 @@ const AuthController = {
       const user = await authService.findByKeyword({ email }, 'email')
       const hashedPassword = await authService.hashedPassword(password)
       if (user && user.isActive === true) {
-        return res.status(404).json({ message: 'Email is already existed and actived !!!' })
+        return res.status(404).json({ message: 'Email is already existed and activated !!!' })
       } else if (user && user.isActive === false) {
         await authService.changePassword(email, hashedPassword)
         await authService.otpVerifyAccount(user)
-        return res.status(201).json({ message: 'Email is already existed and not actived !!!', email: { email } })
+        return res.status(201).json({ message: 'Email is already existed and not activated !!!', email: { email } })
       }
       const newUser = await authService.createUser({
         fullname,
