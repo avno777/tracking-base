@@ -116,7 +116,7 @@ const emailTemplate = {
           <td class="v-container-padding-padding" style="overflow-wrap:break-word;word-break:break-word;padding:10px 0px;font-family:'Montserrat',sans-serif;" align="left">
             
       <div class="v-text-align v-line-height" style="font-size: 14px; color: #018eea; line-height: 170%; text-align: left; word-wrap: break-word;">
-        <p style="line-height: 170%; text-align: center;"><span style="font-size: 24px; line-height: 40.8px;"><strong>WESTOCK</strong></span></p>
+        <p style="line-height: 170%; text-align: center;"><span style="font-size: 24px; line-height: 40.8px;"><strong>SUPPLY-CHAIN</strong></span></p>
     <p style="font-size: 14px; line-height: 170%; text-align: center;"><span style="font-size: 14px; line-height: 23.8px;"><span style="line-height: 23.8px;">Cộng đồng nhà đầu tư chuyên nghiệp</span></span></p>
       </div>
     
@@ -252,7 +252,7 @@ const emailTemplate = {
           <td class="v-container-padding-padding" style="overflow-wrap:break-word;word-break:break-word;padding:18px;font-family:'Montserrat',sans-serif;" align="left">
             
       <div class="v-text-align v-line-height" style="font-size: 14px; color: #ffffff; line-height: 140%; text-align: center; word-wrap: break-word;">
-        <p style="font-size: 14px; line-height: 140%;"><span style="font-size: 12px; line-height: 16.8px;">Copyright weStock | All Rights Reserved</span></p>
+        <p style="font-size: 14px; line-height: 140%;"><span style="font-size: 12px; line-height: 16.8px;">Copyright SUPPLY-CHAIN | All Rights Reserved</span></p>
       </div>
     
           </td>

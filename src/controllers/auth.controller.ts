@@ -124,8 +124,13 @@ const AuthController = {
     }
   },
   refreshTokenController: async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
-    const accessToken = await authService.refreshToken(req.body.refreshToken)
-    return res.status(200).json({ message: 'Refresh token successfully', accessToken })
+    try {
+      const { refreshToken } = req.body
+      const accessToken = await authService.refreshToken(refreshToken)
+      return res.status(200).json({ message: 'Refresh token successfully', accessToken })
+    } catch (error: any) {
+      res.status(401).json({ message: error.message })
+    }
   },
   resetPassword: async (req: Request, res: Response): Promise<Response | void> => {
     const { email, password, newPassword } = req.body

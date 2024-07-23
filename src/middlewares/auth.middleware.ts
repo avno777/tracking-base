@@ -5,12 +5,6 @@ import { IAccount } from '../models/database/accounts.models'
 import accountService from '../services/account.service'
 import { IRequest } from '~/models/interfaces/req.interface'
 
-// interface RequestWithUser extends Request {
-//   user?: {
-//     _id: string
-//   }
-// }
-
 const authMiddleware = async (req: IRequest, res: Response, next: NextFunction): Promise<Response | void> => {
   const authHeader = req.headers.authorization
 
