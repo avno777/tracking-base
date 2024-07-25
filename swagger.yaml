@@ -30,23 +30,50 @@ paths:
               schema:
                 type: object
                 properties:
+                  statusCode:
+                    type: string
                   message:
                     type: string
                   email:
                     type: string
-              example:
-                message: 'User registered successfully'
-                email: 'user@gmail.com'
-        '404':
+              examples:
+                registerAccount:
+                  value:
+                    statusCode: '1000'
+                    message: 'Register successfully !!!'
+                    email: 'user@gmail.com'
+        '400':
           description: Email for register is used
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ResponseMessage'
-              example:
-                message: 'Email existed !!!'
+                type: object
+                properties:
+                  statusCode:
+                    type: string
+                  message:
+                    type: string
+              examples:
+                emailExisted:
+                  value:
+                    statusCode: '1002'
+                    message: 'Email exited !!!'
         '500':
-          $ref: '#/components/responses/500InternalServer'
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: string
+                  message:
+                    type: string
+              examples:
+                internalError:
+                  value:
+                    statusCode: '5014'
+                    message: 'Internal server error'
 
   /auth/login:
     post:
@@ -67,65 +94,62 @@ paths:
               schema:
                 type: object
                 properties:
+                  statusCode:
+                    type: string
                   message:
                     type: string
                   accessToken:
                     type: string
                   refreshToken:
                     type: string
-                  user:
-                    type: object
-                    properties:
-                      _id:
-                        type: string
-                      fullname:
-                        type: string
-                      avatarUrl:
-                        type: string
-                      phone:
-                        type: string
-                      nationCode:
-                        type: string
-                      address:
-                        type: string
-                      city:
-                        type: string
-                      country:
-                        type: string
-                      state:
-                        type: string
-              example:
-                message: 'Login successful'
-                accessToken: 'access token'
-                refreshToken: 'refresh token'
-                user:
-                  _id: 'objectId'
-                  fullname: 'Nguyen A'
-                  avatarUrl: ''
-                  phone: '0909090909'
-                  nationCode: '+84'
-                  address: 'Hanoi, Vietnam'
-                  city: 'Hanoi'
-                  country: 'Vietnam'
-                  state: ''
-        '404':
-          description: Email for login is not found
+              examples:
+                loginSuccessfully:
+                  value:
+                    statusCode: '1003'
+                    message: 'Login successful'
+                    accessToken: 'access token'
+                    refreshToken: 'refresh token'
+        '400':
+          description: Bad request
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ResponseMessage'
-              example:
-                message: 'Email not found !!!'
-        '402':
-          description: Password is invalid
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ResponseMessage'
-              example:
-                message: 'Invalid password'
+                type: object
+                properties:
+                  statusCode:
+                    type: string
+                  message:
+                    type: string
+              examples:
+                unregisteredAccount:
+                  value:
+                    statusCode: '1006'
+                    message: 'Account has not been registered'
+                accountNotActivated:
+                  value:
+                    statusCode: '1005'
+                    message: 'Account has not been active'
+                passwordIncorrect:
+                  value:
+                    statusCode: '1007'
+                    message: 'Password incorrect'
         '500':
-          $ref: '#/components/responses/500InternalServer'
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: string
+                  message:
+                    type: string
+              examples:
+                internalError:
+                  value:
+                    statusCode: '5014'
+                    message: 'Internal server error'
+
   /auth/active:
     post:
       summary: active account
@@ -150,56 +174,89 @@ paths:
               schema:
                 type: object
                 properties:
+                  statusCode:
+                    type: string
                   message:
                     type: string
-                  data:
-                    type: object
-                    properties:
-                      accessToken:
-                        type: string
-                      refreshToken:
-                        type: string
-                      user:
-                        type: object
-                        properties:
-                          _id:
-                            type: string
-                          fullname:
-                            type: string
-                          avatarUrl:
-                            type: string
-                          phone:
-                            type: string
-                          nationCode:
-                            type: string
-                          address:
-                            type: string
-                          city:
-                            type: string
-                          country:
-                            type: string
-                          state:
-                            type: string
+                  accessToken:
+                    type: string
+                  refreshToken:
+                    type: string
+              examples:
+                activateSuccessfully:
+                  value:
+                    statusCode: '1017'
+                    message: 'Activate account successfully'
+                    accessToken: 'access token'
+                    refreshToken: 'refresh token'
         '400':
-          $ref: '#/components/responses/400BadRequest'
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: string
+                  message:
+                    type: string
+              examples:
+                unregisteredAccount:
+                  value:
+                    statusCode: '1006'
+                    message: 'Account has not been registered'
+                accountActivated:
+                  value:
+                    statusCode: '1018'
+                    message: 'Account was activated'
+                otpIncorrect:
+                  value:
+                    statusCode: '1015'
+                    message: 'Incorrect OTP'
+                otpExpired:
+                  value:
+                    statusCode: '1016'
+                    message: 'Expired OTP'
+
         '500':
-          $ref: '#/components/responses/500InternalServer'
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: string
+                  message:
+                    type: string
+              examples:
+                internalError:
+                  value:
+                    statusCode: '5014'
+                    message: 'Internal server error'
+
   /auth/change-password:
     post:
       summary: Change user password
       tags:
         - 'Authentication'
-      security:
-        - bearerAuth: []
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ChangePassword'
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+              required:
+                - email
+                - password
             example:
-              oldPassword: 'old password'
-              newPassword: 'new password'
+              email: 'a@gmail.com'
+              password: '123456'
       responses:
         '200':
           description: Password changed successfully
@@ -208,23 +265,133 @@ paths:
               schema:
                 type: object
                 properties:
+                  statusCode:
+                    type: string
                   message:
                     type: string
-              example:
-                message: 'Password changed successfully'
-        '404':
-          $ref: '#/components/responses/404NotFound'
-        '401':
-          $ref: '#/components/responses/401Unauthorized'
+              examples:
+                passwordChange:
+                  value:
+                    statusCode: '1022'
+                    message: 'Change password successfully'
+        '400':
+          description: Email is not registered
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: string
+                  message:
+                    type: string
+              examples:
+                emailExisted:
+                  value:
+                    statusCode: '1006'
+                    message: 'Account has not been registered'
         '500':
-          $ref: '#/components/responses/500InternalServer'
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: string
+                  message:
+                    type: string
+              examples:
+                internalError:
+                  value:
+                    statusCode: '5014'
+                    message: 'Internal server error'
+
+  /auth/reset-password:
+    post:
+      summary: Reset user password
+      tags:
+        - 'Authentication'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                newPassword:
+                  type: string
+                oldPassword:
+                  type: string
+              required:
+                - email
+                - newPassword
+                - oldPassword
+            example:
+              email: 'a@gmail.com'
+              newPassword: '123457'
+              oldPassword: '123456'
+      responses:
+        '200':
+          description: Password changed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: string
+                  message:
+                    type: string
+              examples:
+                passwordChange:
+                  value:
+                    statusCode: '1022'
+                    message: 'Change password successfully'
+        '400':
+          description: Email is not registered
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: string
+                  message:
+                    type: string
+              examples:
+                emailExisted:
+                  value:
+                    statusCode: '1006'
+                    message: 'Account has not been registered'
+                passwordIncorrect:
+                  value:
+                    statusCode: '1007'
+                    message: 'Password incorrect'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: string
+                  message:
+                    type: string
+              examples:
+                internalError:
+                  value:
+                    statusCode: '5014'
+                    message: 'Internal server error'
+
   /auth/logout:
     post:
       summary: Logout a user
       tags:
         - 'Authentication'
-      security:
-        - bearerAuth: []
       responses:
         '200':
           description: User logged out successfully
@@ -235,21 +402,33 @@ paths:
                 properties:
                   message:
                     type: string
-              example:
-                message: 'Logout successful'
-        '404':
-          $ref: '#/components/responses/404NotFound'
-        '401':
-          $ref: '#/components/responses/401Unauthorized'
+              examples:
+                logoutSuccessfully:
+                  value:
+                    statusCode: '1019'
+                    message: 'Logout successfully'
         '500':
-          $ref: '#/components/responses/500InternalServer'
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: string
+                  message:
+                    type: string
+              examples:
+                internalErrors:
+                  value:
+                    statusCode: '5014'
+                    message: 'Internal server error'
+
   /auth/refresh-token:
     post:
       summary: Refresh token
       tags:
         - 'Authentication'
-      security:
-        - bearerAuth: []
       requestBody:
         required: true
         content:
@@ -271,26 +450,42 @@ paths:
               schema:
                 type: object
                 properties:
+                  statusCode:
+                    type: string
                   message:
                     type: string
                   accessToken:
                     type: string
-              example:
-                message: 'Refresh token successfully'
-                accessToken: 'new access token'
-        '404':
-          $ref: '#/components/responses/404NotFound'
-        '401':
-          $ref: '#/components/responses/401Unauthorized'
+                  refreshToken:
+                    type: string
+              examples:
+                refreshTokenRes:
+                  value:
+                    statusCode: '1021'
+                    message: 'Refresh Token Successfully'
+                    accessToken: 'new access token'
         '500':
-          $ref: '#/components/responses/500InternalServer'
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: string
+                  message:
+                    type: string
+              examples:
+                internalError:
+                  value:
+                    statusCode: '5014'
+                    message: 'Internal server error'
+
   /auth/send-otp-forgot:
     post:
       summary: Send OTP token forgot
       tags:
         - 'Authentication'
-      security:
-        - bearerAuth: []
       requestBody:
         required: true
         content:
@@ -312,20 +507,32 @@ paths:
               schema:
                 type: object
                 properties:
+                  statusCode:
+                    type: string
                   message:
                     type: string
-                  data:
-                    type: object
-                    properties:
-                      otp:
-                        type: string
-                      email:
-                        type: string
               example:
-                message: 'Send OTP successfully'
-                data:
-                  otp: '123456'
-                  email: 'a@gmail.com'
+                sendOTPRes:
+                  value:
+                    statusCode: '1022'
+                    message: 'Send OTP successfully'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: string
+                  message:
+                    type: string
+              examples:
+                internalError:
+                  value:
+                    statusCode: '5014'
+                    message: 'Internal server error'
+
   /auth/verify-otp-forGot:
     post:
       summary: Verify OTP forgot
@@ -356,11 +563,68 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ResponseMessage'
+                type: object
+                properties:
+                  statusCode:
+                    type: string
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      otp:
+                        type: number
+                      email:
+                        type: string
               example:
+                verifyOTPRes:
+                  value:
+                    statusCode: '1023'
+                    message: 'Verify OTP successfully'
+                    data:
+                      otp: 123457
+                      email: 'a@gmail.com'
                 message: 'Send OTP successfully'
         '400':
-          $ref: '#/components/responses/400BadRequest'
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: string
+                  message:
+                    type: string
+              examples:
+                unregisteredAccount:
+                  value:
+                    statusCode: '1006'
+                    message: 'Account has not been registered'
+                otpIncorrect:
+                  value:
+                    statusCode: '1015'
+                    message: 'Incorrect OTP'
+                otpExpired:
+                  value:
+                    statusCode: '1016'
+                    message: 'Expired OTP'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: string
+                  message:
+                    type: string
+              examples:
+                internalError:
+                  value:
+                    statusCode: '5014'
+                    message: 'Internal server error'
 
   /account/user-info:
     get:
@@ -392,7 +656,22 @@ paths:
         '401':
           $ref: '#/components/responses/401Unauthorized'
         '500':
-          $ref: '#/components/responses/500InternalServer'
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: string
+                  message:
+                    type: string
+              examples:
+                internalError:
+                  value:
+                    statusCode: '5014'
+                    message: 'Internal server error'
+
     put:
       summary: Update account information
       tags:
@@ -436,7 +715,21 @@ paths:
         '401':
           $ref: '#/components/responses/401Unauthorized'
         '500':
-          $ref: '#/components/responses/500InternalServer'
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: string
+                  message:
+                    type: string
+              examples:
+                internalError:
+                  value:
+                    statusCode: '5014'
+                    message: 'Internal server error'
 
   # CRUD APIs
   /order:
@@ -519,7 +812,22 @@ paths:
         '401':
           $ref: '#/components/responses/401Unauthorized'
         '500':
-          $ref: '#/components/responses/500InternalServer'
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: string
+                  message:
+                    type: string
+              examples:
+                internalError:
+                  value:
+                    statusCode: '5014'
+                    message: 'Internal server error'
+
     post:
       summary: create an order
       tags:
@@ -567,7 +875,22 @@ paths:
         '401':
           $ref: '#/components/responses/401Unauthorized'
         '500':
-          $ref: '#/components/responses/500InternalServer'
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: string
+                  message:
+                    type: string
+              examples:
+                internalError:
+                  value:
+                    statusCode: '5014'
+                    message: 'Internal server error'
+
   /order/{id}:
     get:
       summary: Get order by ID
@@ -593,7 +916,22 @@ paths:
         '401':
           $ref: '#/components/responses/401Unauthorized'
         '500':
-          $ref: '#/components/responses/500InternalServer'
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: string
+                  message:
+                    type: string
+              examples:
+                internalError:
+                  value:
+                    statusCode: '5014'
+                    message: 'Internal server error'
+
     put:
       summary: Update order by ID
       tags:
@@ -655,7 +993,22 @@ paths:
         '401':
           $ref: '#/components/responses/401Unauthorized'
         '500':
-          $ref: '#/components/responses/500InternalServer'
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: string
+                  message:
+                    type: string
+              examples:
+                internalError:
+                  value:
+                    statusCode: '5014'
+                    message: 'Internal server error'
+
     delete:
       summary: Delete order by ID
       tags:
@@ -676,7 +1029,22 @@ paths:
         '404':
           $ref: '#/components/responses/404NotFound'
         '500':
-          $ref: '#/components/responses/500InternalServer'
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: string
+                  message:
+                    type: string
+              examples:
+                internalError:
+                  value:
+                    statusCode: '5014'
+                    message: 'Internal server error'
+
   #Customer
   /customer:
     get:
@@ -758,7 +1126,22 @@ paths:
         '401':
           $ref: '#/components/responses/401Unauthorized'
         '500':
-          $ref: '#/components/responses/500InternalServer'
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: string
+                  message:
+                    type: string
+              examples:
+                internalError:
+                  value:
+                    statusCode: '5014'
+                    message: 'Internal server error'
+
     post:
       summary: create an customer
       tags:
@@ -806,7 +1189,22 @@ paths:
         '401':
           $ref: '#/components/responses/401Unauthorized'
         '500':
-          $ref: '#/components/responses/500InternalServer'
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: string
+                  message:
+                    type: string
+              examples:
+                internalError:
+                  value:
+                    statusCode: '5014'
+                    message: 'Internal server error'
+
   /customer/{id}:
     get:
       summary: Get customer by ID
@@ -832,7 +1230,22 @@ paths:
         '401':
           $ref: '#/components/responses/401Unauthorized'
         '500':
-          $ref: '#/components/responses/500InternalServer'
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: string
+                  message:
+                    type: string
+              examples:
+                internalError:
+                  value:
+                    statusCode: '5014'
+                    message: 'Internal server error'
+
     put:
       summary: Update customer by ID
       tags:
@@ -894,7 +1307,22 @@ paths:
         '401':
           $ref: '#/components/responses/401Unauthorized'
         '500':
-          $ref: '#/components/responses/500InternalServer'
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: string
+                  message:
+                    type: string
+              examples:
+                internalError:
+                  value:
+                    statusCode: '5014'
+                    message: 'Internal server error'
+
     delete:
       summary: Delete customer by ID
       tags:
@@ -915,7 +1343,21 @@ paths:
         '404':
           $ref: '#/components/responses/404NotFound'
         '500':
-          $ref: '#/components/responses/500InternalServer'
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: string
+                  message:
+                    type: string
+              examples:
+                internalError:
+                  value:
+                    statusCode: '5014'
+                    message: 'Internal server error'
 
 components:
   securitySchemes:
