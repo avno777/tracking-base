@@ -12,7 +12,7 @@ interface IAccountService {
   createData(data: any): Promise<any>
   getData(req: Request): Promise<{ total: number; data: any[] }>
   getDataById(_id: string): Promise<any>
-  updateDataById(req: Request): Promise<any>
+  updateDataById(_id: string, req: Request): Promise<any>
   deleteDataById(req: Request): Promise<any>
 }
 interface RequestWithUser extends Request {
@@ -86,11 +86,10 @@ const AccountService: IAccountService = {
       throw error
     }
   },
-  async updateDataById(req: IRequest) {
+  async updateDataById(_id: string, req: Request) {
     try {
-      const dataId = req.user?._id ?? ''
       const data = req.body
-      const updatedData = await accountModel.findByIdAndUpdate(dataId, data, { new: true })
+      const updatedData = await accountModel.findByIdAndUpdate(_id, data, { new: true })
       return updatedData
     } catch (error) {
       logger.error('Error creating data:', error) // Xử lý lỗi cụ thể

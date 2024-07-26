@@ -37,7 +37,8 @@ const AccountController = {
   },
   updateDataById: async function (req: IRequest, res: Response): Promise<void> {
     try {
-      const updatedData = await accountService.updateDataById(req)
+      const dataId: string = req.user?._id ?? ''
+      const updatedData = await accountService.updateDataById(dataId, req)
       if (!updatedData) {
         res.status(404).json({ message: 'Data not found' })
       }
